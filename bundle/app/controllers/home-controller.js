@@ -12,20 +12,17 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var StreamTalk_1 = require("StreamTalk");
-var HomeController = (function () {
-    function HomeController(logProvider) {
+const StreamTalk_1 = require("StreamTalk");
+let HomeController = class HomeController {
+    constructor(logProvider) {
         this.log = logProvider.factory();
     }
-    HomeController.prototype.show = function (req, res, next) {
+    show(req, res, next) {
         res.send(200, 'Hello world');
         next();
-    };
-    return HomeController;
-}());
+    }
+};
 HomeController = __decorate([
-    StreamTalk_1.IOC.Resolve,
-    StreamTalk_1.Decorators.Controller,
     __param(0, StreamTalk_1.IOC.Inject),
     __metadata("design:paramtypes", [StreamTalk_1.LogProvider])
 ], HomeController);

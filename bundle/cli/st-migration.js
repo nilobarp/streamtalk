@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var program = require("commander");
+const program = require("commander");
 program
     .usage('[command] [options]')
     .command('new', 'Create new migration file')

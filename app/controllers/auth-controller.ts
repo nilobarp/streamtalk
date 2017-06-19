@@ -7,7 +7,7 @@ import { Types, IOC, Decorators, LogProvider } from 'StreamTalk';
 import { sign, SignOptions } from 'jsonwebtoken';
 import { stdoutLogger } from '../../config/logger';
 
-@IOC.Resolve
+// @IOC.AutoWired
 @Decorators.Controller
 export class AuthController implements Types.AuthGuard {
     private config: Types.ServerConfig;
@@ -53,6 +53,7 @@ export class AuthController implements Types.AuthGuard {
     authorize (req, res, next) {
         let auth = req.authorization.basic;
         let {username, password} = auth;
+        console.log(this.logger, username, password);
         this.logger.info({user: auth});
         if (username === 'validusername' && password === 'validpassword') {
             let signOptions: SignOptions = {
