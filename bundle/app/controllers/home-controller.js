@@ -12,22 +12,19 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var StreamTalk_1 = require("StreamTalk");
-var HomeController = (function () {
-    function HomeController(logProvider) {
-        this.log = logProvider.factory();
+const core_1 = require("../../core");
+let HomeController = class HomeController {
+    constructor(logProvider) {
     }
-    HomeController.prototype.show = function (req, res, next) {
+    show(req, res, next) {
         res.send(200, 'Hello world');
         next();
-    };
-    return HomeController;
-}());
+    }
+};
 HomeController = __decorate([
-    StreamTalk_1.IOC.Resolve,
-    StreamTalk_1.Decorators.Controller,
-    __param(0, StreamTalk_1.IOC.Inject),
-    __metadata("design:paramtypes", [StreamTalk_1.LogProvider])
+    core_1.Decorators.Controller,
+    __param(0, core_1.IOC.Inject),
+    __metadata("design:paramtypes", [core_1.LogProvider])
 ], HomeController);
 exports.HomeController = HomeController;
 //# sourceMappingURL=home-controller.js.map

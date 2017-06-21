@@ -2,7 +2,7 @@
 import * as program from 'commander';
 import * as fs from 'fs';
 import * as path from 'path';
-import { IOC, Types, DbPool, Bootstrap, Client } from 'StreamTalk';
+import { IOC, Types, Bootstrap, Database } from 'StreamTalk';
 import '../config/ioc-bindings';
 
 program
@@ -29,24 +29,42 @@ if(dbConf.database === undefined) {
     process.exit(-1);
 }
 
-IOC.Container.bind(DbPool).to(DbPool).scope(IOC.Scope.Local);
-let db: DbPool = IOC.Container.get(DbPool);
-
-let query = db.query('SELECT 1::int');
-query.then((results) => {
-    console.log(results);
+let db: Database = IOC.Container.get(Database);
+let client = db.client;
+getMigrations();
+client.tx((t) => {
+    // for (let i =0 ; i < 100; i++) {
+    //     t.none('INSERT INTO users (username, password) values (\'user' + i + '\',\'password' + i + '\')');
+    // }
+    // t.none('INSERT INTO users (username) values (user)');
+    return t.sequence(source, {limit: 100000});
+}).then(value => {
+    console.log('Tx completed');
+}).catch((err) => {
+    console.log('Tx rolledback', err);
 });
 
-// let client = new Client(dbConf);
-// client.connect((err) => {
-//     console.error(err);
-// });
+// tslint:disable-next-line:no-var-keyword
+var migrations: string[];
 
-// let query = client.query('SELECT 1::int as number').then((value) => {
-//     console.log(value.rows[0].number);
-//     client.end();
-// }).catch((reason) => {
-//     console.error(reason);
-// });
+function getMigrations () {
+    let migrationsFolder: string = path.resolve(rootPath, '..', 'database', 'migrations');
+    migrations = fs.readdirSync(migrationsFolder).filter((migration) => { return migration.substr(-3) === '.js'; });
+    migrations.map((migration) => { return path.join(migrationsFolder, migration); });
+    console.log(migrations);
+    // for(let migration of migrations) {
+    //     let up = require(path.join(migrationsFolder, migration)).up;
+    //     console.log(up);
+    // }
+    // // let up = require()
+    // console.log(migrationsFolder);
+}
+
+function * source (index) {
+    if (index < migrations.length) {
+        let up = require(migrations[index]).up;
+        return yield this.any(up);
+    }
+}
 
 process.env.NODE_ENV = nodeEnv;

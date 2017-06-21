@@ -2,9 +2,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 require("../config/ioc-bindings");
-var program = require("commander");
-var programVersion = '1.0.0';
-program.version("StreamTalk CLI: " + programVersion)
+const program = require("commander");
+const programVersion = '1.0.0';
+program.version(`StreamTalk CLI: ${programVersion}`)
     .usage('[command] [sub-command]')
     .command('migration [new]', 'Create a new migration file')
     .command('migration [up]', 'Run pending migrations')

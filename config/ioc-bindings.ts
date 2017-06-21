@@ -1,4 +1,4 @@
-import { IOC, Types } from 'StreamTalk';
+import { IOC, Types } from '../core';
 import { SrvConf } from '../config/app';
 import { DatabaseConfig } from '../config/database';
 import { HomeController } from '../app/controllers/home-controller';

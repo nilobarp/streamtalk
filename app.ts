@@ -1,4 +1,4 @@
-import { IOC, Types, Bootstrap } from 'StreamTalk';
+import { Bootstrap, IOC } from './core';
 import './config/ioc-bindings';
 
 let instance = new Bootstrap(__dirname);

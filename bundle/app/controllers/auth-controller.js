@@ -12,18 +12,18 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var passport = require("passport");
-var passport_jwt_1 = require("passport-jwt");
-var StreamTalk_1 = require("StreamTalk");
-var jsonwebtoken_1 = require("jsonwebtoken");
-var logger_1 = require("../../config/logger");
-var AuthController = (function () {
-    function AuthController(config, logProvider) {
+const passport = require("passport");
+const passport_jwt_1 = require("passport-jwt");
+const core_1 = require("../../core");
+const jsonwebtoken_1 = require("jsonwebtoken");
+const logger_1 = require("../../config/logger");
+let AuthController = class AuthController {
+    constructor(config, logProvider) {
         this.config = config;
         this.logger = logProvider.factory(logger_1.stdoutLogger);
     }
-    AuthController.prototype.initialize = function (options) {
-        var opts = {
+    initialize(options) {
+        let opts = {
             jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeader(),
             secretOrKey: this.config.secretKey
         };
@@ -31,21 +31,22 @@ var AuthController = (function () {
             done(undefined, true);
         }));
         return passport.initialize();
-    };
-    AuthController.prototype.extractJwt = function (req) {
-        var jwt = passport_jwt_1.ExtractJwt.fromAuthHeader()(req);
+    }
+    extractJwt(req) {
+        let jwt = passport_jwt_1.ExtractJwt.fromAuthHeader()(req);
         return jwt;
-    };
-    AuthController.prototype.authenticate = function () {
+    }
+    authenticate() {
         return passport.authenticate('jwt', { session: false });
-    };
-    AuthController.prototype.authorize = function (req, res, next) {
-        var auth = req.authorization.basic;
-        var username = auth.username, password = auth.password;
+    }
+    authorize(req, res, next) {
+        let auth = req.authorization.basic;
+        let { username, password } = auth;
+        console.log(this.logger, username, password);
         this.logger.info({ user: auth });
         if (username === 'validusername' && password === 'validpassword') {
-            var signOptions = {};
-            var token = jsonwebtoken_1.sign({ user: 'validuser' }, this.config.secretKey, signOptions);
+            let signOptions = {};
+            let token = jsonwebtoken_1.sign({ user: 'validuser' }, this.config.secretKey, signOptions);
             res.send(200, token);
             next();
         }
@@ -53,15 +54,13 @@ var AuthController = (function () {
             res.send(401);
             next();
         }
-    };
-    return AuthController;
-}());
+    }
+};
 AuthController = __decorate([
-    StreamTalk_1.IOC.Resolve,
-    StreamTalk_1.Decorators.Controller,
-    __param(0, StreamTalk_1.IOC.Inject),
-    __param(1, StreamTalk_1.IOC.Inject),
-    __metadata("design:paramtypes", [StreamTalk_1.Types.ServerConfig, StreamTalk_1.LogProvider])
+    core_1.Decorators.Controller,
+    __param(0, core_1.IOC.Inject),
+    __param(1, core_1.IOC.Inject),
+    __metadata("design:paramtypes", [core_1.Types.ServerConfig, core_1.LogProvider])
 ], AuthController);
 exports.AuthController = AuthController;
 //# sourceMappingURL=auth-controller.js.map

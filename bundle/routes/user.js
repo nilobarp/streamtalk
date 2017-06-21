@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var StreamTalk_1 = require("StreamTalk");
-var loginController = StreamTalk_1.IOC.Container.get(StreamTalk_1.Types.AuthGuard);
+const core_1 = require("../core");
+let loginController = core_1.IOC.Container.get(core_1.Types.AuthGuard);
 exports.login = {
     method: 'POST',
     path: '/login',

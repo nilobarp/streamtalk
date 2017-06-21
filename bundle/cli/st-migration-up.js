@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var program = require("commander");
-var path = require("path");
-var StreamTalk_1 = require("StreamTalk");
+const program = require("commander");
+const fs = require("fs");
+const path = require("path");
+const StreamTalk_1 = require("StreamTalk");
 require("../config/ioc-bindings");
 program
     .usage('-e <environment>')
@@ -14,20 +15,37 @@ if (!program.env) {
     program.outputHelp();
     process.exit(-1);
 }
-var nodeEnv = process.env.NODE_ENV;
+const nodeEnv = process.env.NODE_ENV;
 process.env.NODE_ENV = program.env ? (program.env.toUpperCase() === 'PROD' ? '' : program.env) : '';
-var rootPath = path.resolve(__dirname, '..');
-var bootstrap = new StreamTalk_1.Bootstrap(rootPath);
-var dbConf = StreamTalk_1.IOC.Container.get(StreamTalk_1.Types.DatabaseConfig);
+let rootPath = path.resolve(__dirname, '..');
+let bootstrap = new StreamTalk_1.Bootstrap(rootPath);
+let dbConf = StreamTalk_1.IOC.Container.get(StreamTalk_1.Types.DatabaseConfig);
 if (dbConf.database === undefined) {
     console.error('Can\'t read database config. Did you bind the implementation in IOC container?');
     process.exit(-1);
 }
-StreamTalk_1.IOC.Container.bind(StreamTalk_1.DbPool).to(StreamTalk_1.DbPool).scope(StreamTalk_1.IOC.Scope.Local);
-var db = StreamTalk_1.IOC.Container.get(StreamTalk_1.DbPool);
-var query = db.query('SELECT 1::int');
-query.then(function (results) {
-    console.log(results);
+let db = StreamTalk_1.IOC.Container.get(StreamTalk_1.Database);
+let client = db.client;
+getMigrations();
+client.tx((t) => {
+    return t.sequence(source, { limit: 100000 });
+}).then(value => {
+    console.log('Tx completed');
+}).catch((err) => {
+    console.log('Tx rolledback', err);
 });
+var migrations;
+function getMigrations() {
+    let migrationsFolder = path.resolve(rootPath, '..', 'database', 'migrations');
+    migrations = fs.readdirSync(migrationsFolder).filter((migration) => { return migration.substr(-3) === '.js'; });
+    migrations.map((migration) => { return path.join(migrationsFolder, migration); });
+    console.log(migrations);
+}
+function* source(index) {
+    if (index < migrations.length) {
+        let up = require(migrations[index]).up;
+        return yield this.any(up);
+    }
+}
 process.env.NODE_ENV = nodeEnv;
 //# sourceMappingURL=st-migration-up.js.map

@@ -1,4 +1,4 @@
-import { Types, IOC } from 'StreamTalk';
+import { IOC, Types } from '../core';
 
 let loginController: Types.AuthGuard = IOC.Container.get(Types.AuthGuard);
 

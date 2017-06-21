@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var program = require("commander");
-var fs = require("fs");
-var path = require("path");
+const program = require("commander");
+const fs = require("fs");
+const path = require("path");
 program
     .usage('-f <filename> [-t]')
     .option('-f, --file [name]', '(Required) Name the migration')
@@ -14,13 +14,13 @@ if (!program.file) {
     program.outputHelp();
     process.exit(-1);
 }
-var rootLocation = path.resolve('.');
-var migrationFolder = path.join(rootLocation, 'database', 'migrations');
+const rootLocation = path.resolve('.');
+const migrationFolder = path.join(rootLocation, 'database', 'migrations');
 if (fs.existsSync(migrationFolder)) {
-    var now = new Date();
-    var version = '' + now.getFullYear() + now.getMonth() + now.getDate()
+    let now = new Date();
+    let version = '' + now.getFullYear() + now.getMonth() + now.getDate()
         + now.getUTCHours() + now.getUTCMinutes() + now.getUTCSeconds() + now.getUTCMilliseconds();
-    var migrationFile = path.join(migrationFolder, normalizeFilename(program.file) + '_' + version + '.js');
+    let migrationFile = path.join(migrationFolder, normalizeFilename(program.file) + '_' + version + '.js');
     console.log('Writing to: ' + migrationFile);
     fs.writeFileSync(migrationFile, '/*Migration: ' + migrationFile + '*/');
 }
