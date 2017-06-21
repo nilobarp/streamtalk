@@ -33,68 +33,68 @@
 
 // routine().then(r => console.log(r));
 
-import * as pgp from 'pg-promise';
-import * as promise from 'bluebird';
-import * as Bunyan from 'bunyan';
+// import * as pgp from 'pg-promise';
+// import * as promise from 'bluebird';
+// import * as Bunyan from 'bunyan';
 
-class DbPool {
-    private dbPoolConfig: pgp.IOptions<any>;
-    private _databasePool: pgp.IDatabase<any>;
-    private logger: Bunyan;
+// class DbPool {
+//     private dbPoolConfig: pgp.IOptions<any>;
+//     private _databasePool: pgp.IDatabase<any>;
+//     private logger: Bunyan;
 
-    constructor (
-    ) {
-        this.init();
-    }
+//     constructor (
+//     ) {
+//         this.init();
+//     }
 
-    private init () {
-        let instance: pgp.IMain = pgp({promiseLib: promise});
-        // instance.pg.defaults.poolSize = 50;
-        this._databasePool = <pgp.IDatabase<any>> instance('postgres://user:password@localhost:5432/hthero');
-    }
+//     private init () {
+//         let instance: pgp.IMain = pgp({promiseLib: promise});
+//         // instance.pg.defaults.poolSize = 50;
+//         this._databasePool = <pgp.IDatabase<any>> instance('postgres://user:password@localhost:5432/hthero');
+//     }
 
-    public get client(): pgp.IDatabase<any> {
-        return this._databasePool;
-    }
-}
+//     public get client(): pgp.IDatabase<any> {
+//         return this._databasePool;
+//     }
+// }
 
-let db = new DbPool();
-let client = db.client;
+// let db = new DbPool();
+// let client = db.client;
 
-async function getUsers () {
-  // let users7 = await client.many('select * from users where username like \'%77777\'');
-  // let profile;
-  // try {
-  //   profile = await getProfile(users7[0].username);
-  // } catch (err) {
-  //   console.log(err);
-  // }
-  // return {users7, profile};
-  let user = 'user';
-  return /u/.test(user);
-}
+// async function getUsers () {
+//   // let users7 = await client.many('select * from users where username like \'%77777\'');
+//   // let profile;
+//   // try {
+//   //   profile = await getProfile(users7[0].username);
+//   // } catch (err) {
+//   //   console.log(err);
+//   // }
+//   // return {users7, profile};
+//   let user = 'user';
+//   return /u/.test(user);
+// }
 
-async function getProfile (user: string) {
-  // let userProfile = await client.any('select * from profile where userid = 2');
-  // return userProfile;
-  return 'profile';
-}
+// async function getProfile (user: string) {
+//   // let userProfile = await client.any('select * from profile where userid = 2');
+//   // return userProfile;
+//   return 'profile';
+// }
 
-import * as Benchmark from 'benchmark';
+// import * as Benchmark from 'benchmark';
 
-let suite = new Benchmark.Suite;
+// let suite = new Benchmark.Suite;
 
-suite
-.add('get user', function() {
-  getUsers();
-})
-.add('get profile', () => {
-  getProfile('user77777');
-})
-.on('cycle', function(event) {
-  console.log(String(event.target));
-})
-.on('complete', function () {
-  console.log('Fastest is ' + this.filter('fastest').map('name'));
-})
-.run({async: false});
+// suite
+// .add('get user', function() {
+//   getUsers();
+// })
+// .add('get profile', () => {
+//   getProfile('user77777');
+// })
+// .on('cycle', function(event) {
+//   console.log(String(event.target));
+// })
+// .on('complete', function () {
+//   console.log('Fastest is ' + this.filter('fastest').map('name'));
+// })
+// .run({async: false});

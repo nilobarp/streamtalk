@@ -1,4 +1,4 @@
-import { Types } from 'StreamTalk';
+import { Types } from '../core';
 
 const SERVER_PORT_VAR_KEY: string = 'SERVER_PORT';
 

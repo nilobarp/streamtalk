@@ -1,4 +1,4 @@
-import { Types } from 'StreamTalk';
+import { Types } from '../core';
 
 export class DatabaseConfig implements Types.DatabaseConfig {
     database = process.env.PGDATABASE;

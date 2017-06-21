@@ -3,7 +3,7 @@ import * as Bunyan from 'bunyan';
 import * as passport from 'passport';
 import { BasicStrategy } from 'passport-http';
 import { Strategy as JwtStrategy, ExtractJwt, StrategyOptions } from 'passport-jwt';
-import { Types, IOC, Decorators, LogProvider } from 'StreamTalk';
+import { Types, IOC, Decorators, LogProvider } from '../../core';
 import { sign, SignOptions } from 'jsonwebtoken';
 import { stdoutLogger } from '../../config/logger';
 

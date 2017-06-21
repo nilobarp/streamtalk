@@ -8,23 +8,21 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const core_1 = require("../../core");
-let HomeController = class HomeController {
-    constructor(logProvider) {
+const es6_1 = require("typescript-ioc/es6");
+const i18n_provider_1 = require("./i18n.provider");
+class ErrorProvider extends Error {
+    constructor() {
+        super();
     }
-    show(req, res, next) {
-        res.send(200, 'Hello world');
-        next();
+    throwAppSecretUndefined() {
+        this.message = 'App secret key is not defined';
+        throw this;
     }
-};
-HomeController = __decorate([
-    core_1.Decorators.Controller,
-    __param(0, core_1.IOC.Inject),
-    __metadata("design:paramtypes", [core_1.LogProvider])
-], HomeController);
-exports.HomeController = HomeController;
-//# sourceMappingURL=home-controller.js.map
+}
+__decorate([
+    es6_1.Inject,
+    __metadata("design:type", i18n_provider_1.I18N)
+], ErrorProvider.prototype, "i18n", void 0);
+exports.ErrorProvider = ErrorProvider;
+//# sourceMappingURL=error.provider.js.map

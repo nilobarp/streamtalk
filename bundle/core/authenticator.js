@@ -12,19 +12,25 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const core_1 = require("../../core");
-let HomeController = class HomeController {
-    constructor(logProvider) {
+const es6_1 = require("typescript-ioc/es6");
+const types_1 = require("./types");
+let Authenticator = class Authenticator {
+    constructor(authGuard) {
+        this.authGuard = authGuard;
     }
-    show(req, res, next) {
-        res.send(200, 'Hello world');
-        next();
+    get enabled() {
+        return ('initialize' in this.authGuard && 'authenticate' in this.authGuard);
+    }
+    initialize(options) {
+        return this.authGuard.initialize(options);
+    }
+    authenticate() {
+        return this.authGuard.authenticate();
     }
 };
-HomeController = __decorate([
-    core_1.Decorators.Controller,
-    __param(0, core_1.IOC.Inject),
-    __metadata("design:paramtypes", [core_1.LogProvider])
-], HomeController);
-exports.HomeController = HomeController;
-//# sourceMappingURL=home-controller.js.map
+Authenticator = __decorate([
+    __param(0, es6_1.Inject),
+    __metadata("design:paramtypes", [types_1.AuthGuard])
+], Authenticator);
+exports.Authenticator = Authenticator;
+//# sourceMappingURL=authenticator.js.map

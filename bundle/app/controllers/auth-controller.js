@@ -14,7 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const passport = require("passport");
 const passport_jwt_1 = require("passport-jwt");
-const StreamTalk_1 = require("StreamTalk");
+const core_1 = require("../../core");
 const jsonwebtoken_1 = require("jsonwebtoken");
 const logger_1 = require("../../config/logger");
 let AuthController = class AuthController {
@@ -57,10 +57,10 @@ let AuthController = class AuthController {
     }
 };
 AuthController = __decorate([
-    StreamTalk_1.Decorators.Controller,
-    __param(0, StreamTalk_1.IOC.Inject),
-    __param(1, StreamTalk_1.IOC.Inject),
-    __metadata("design:paramtypes", [StreamTalk_1.Types.ServerConfig, StreamTalk_1.LogProvider])
+    core_1.Decorators.Controller,
+    __param(0, core_1.IOC.Inject),
+    __param(1, core_1.IOC.Inject),
+    __metadata("design:paramtypes", [core_1.Types.ServerConfig, core_1.LogProvider])
 ], AuthController);
 exports.AuthController = AuthController;
 //# sourceMappingURL=auth-controller.js.map
