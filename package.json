@@ -4,7 +4,7 @@
   "description": "",
   "main": "bundle/app.js",
   "scripts": {
-    "start": "DEBUG=trace NODE_ENV=dev node bundle/app.js | bunyan -o short",
+    "start": "DEBUG=info NODE_ENV=dev node bundle/app.js | bunyan -o short",
     "transpile": "tsc --pretty",
     "transpile:watch": "npm run transpile -- -w",
     "lint": "tslint --exclude='./node_modules/**' './**/*.ts?(x)'",
@@ -23,6 +23,7 @@
     "@types/benchmark": "^1.0.30",
     "@types/bluebird": "^3.5.5",
     "@types/chai": "^3.5.2",
+    "@types/graphql": "^0.9.1",
     "@types/jsonwebtoken": "^7.2.0",
     "@types/mocha": "^2.2.41",
     "@types/passport-http": "^0.3.2",
@@ -33,6 +34,7 @@
     "chai": "^3.5.0",
     "chokidar-cli": "^1.2.0",
     "concurrently": "^3.4.0",
+    "express-graphql": "^0.6.6",
     "istanbul": "^0.4.5",
     "linklocal": "^2.8.0",
     "microtime": "^2.1.5",
@@ -43,6 +45,7 @@
   },
   "dependencies": {
     "bluebird": "^3.5.0",
+    "graphql": "^0.10.1",
     "jsonwebtoken": "^7.4.0",
     "passport": "^0.3.2",
     "passport-http": "^0.3.0",
