@@ -60,7 +60,6 @@
     "reflect-metadata": "^0.1.10",
     "restify": "^4.3.0",
     "sequelize": "^4.1.0",
-    "streamtalk": "file:///Users/nilotpal/code/heroel/streamtalk",
     "typescript-ioc": "^0.4.2"
   }
 }

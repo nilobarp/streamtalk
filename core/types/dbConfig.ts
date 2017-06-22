@@ -1,4 +1,7 @@
+import { DatabaseDialect } from './composite';
+
 export abstract class DatabaseConfig {
+    dialect: DatabaseDialect;
     /**
      * Database name
      */

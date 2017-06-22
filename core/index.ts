@@ -5,7 +5,7 @@ import * as Decorators from './decorators';
 import { LogProvider } from './log.provider';
 import { I18N } from './i18n.provider';
 import { loadEnvironment } from './helpers/env';
-import * as Database from './database';
+import { Database } from './database';
 
 export {
     Bootstrap,

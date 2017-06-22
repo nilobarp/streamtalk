@@ -1,4 +1,4 @@
-import { Types, IOC } from 'StreamTalk';
+import { Types, IOC } from '../core';
 import { HomeController } from '../app/controllers/home-controller';
 
 let controller: HomeController = IOC.Container.get(HomeController);

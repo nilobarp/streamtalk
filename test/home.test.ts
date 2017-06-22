@@ -1,7 +1,7 @@
 import 'mocha';
 import * as chai from 'chai';
 import * as Request from 'request';
-import { IOC, Types, Bootstrap } from 'StreamTalk';
+import { IOC, Types, Bootstrap } from '../core';
 
 let expect = chai.expect;
 

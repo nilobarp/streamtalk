@@ -29,7 +29,10 @@
             "name": "Attach to Port",
             "address": "localhost",
             "port": 5858,
-            "outFiles": []
+            "outFiles": [
+                "${workspaceRoot}/bundle/**/*.js",
+                "${workspaceRoot}/bundle/**/*.js.map"
+            ]
         }
     ]
 }

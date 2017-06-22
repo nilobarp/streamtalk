@@ -1,10 +1,17 @@
 #!/usr/bin/env node
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const program = require("commander");
-const fs = require("fs");
 const path = require("path");
-const StreamTalk_1 = require("StreamTalk");
+const core_1 = require("../core");
 require("../config/ioc-bindings");
 program
     .usage('-e <environment>')
@@ -18,34 +25,24 @@ if (!program.env) {
 const nodeEnv = process.env.NODE_ENV;
 process.env.NODE_ENV = program.env ? (program.env.toUpperCase() === 'PROD' ? '' : program.env) : '';
 let rootPath = path.resolve(__dirname, '..');
-let bootstrap = new StreamTalk_1.Bootstrap(rootPath);
-let dbConf = StreamTalk_1.IOC.Container.get(StreamTalk_1.Types.DatabaseConfig);
-if (dbConf.database === undefined) {
-    console.error('Can\'t read database config. Did you bind the implementation in IOC container?');
-    process.exit(-1);
+let bootstrap = new core_1.Bootstrap(rootPath);
+const user_model_1 = require("../app/models/user.model");
+const inventory_model_1 = require("../app/models/inventory.model");
+function migrator() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            yield user_model_1.User.sync({ force: false });
+            yield inventory_model_1.Inventory.sync({ force: false });
+        }
+        catch (err) {
+            throw err;
+        }
+        finally {
+            const database = core_1.IOC.Container.get(core_1.Database);
+            database.close();
+        }
+    });
 }
-let db = StreamTalk_1.IOC.Container.get(StreamTalk_1.Database);
-let client = db.client;
-getMigrations();
-client.tx((t) => {
-    return t.sequence(source, { limit: 100000 });
-}).then(value => {
-    console.log('Tx completed');
-}).catch((err) => {
-    console.log('Tx rolledback', err);
-});
-var migrations;
-function getMigrations() {
-    let migrationsFolder = path.resolve(rootPath, '..', 'database', 'migrations');
-    migrations = fs.readdirSync(migrationsFolder).filter((migration) => { return migration.substr(-3) === '.js'; });
-    migrations.map((migration) => { return path.join(migrationsFolder, migration); });
-    console.log(migrations);
-}
-function* source(index) {
-    if (index < migrations.length) {
-        let up = require(migrations[index]).up;
-        return yield this.any(up);
-    }
-}
+migrator().then(() => console.log('Migration complete.'));
 process.env.NODE_ENV = nodeEnv;
 //# sourceMappingURL=st-migration-up.js.map
