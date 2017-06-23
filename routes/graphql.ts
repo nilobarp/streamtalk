@@ -1,4 +1,4 @@
-import { Types } from 'StreamTalk';
+import { Types } from '../core';
 import * as graphQLHTTP from 'express-graphql';
 import * as schema from '../app/schemas/schema';
 

@@ -59,6 +59,7 @@ let Connection = class Connection {
 Connection = __decorate([
     es6_1.Singleton,
     __param(0, es6_1.Inject), __param(1, es6_1.Inject),
-    __metadata("design:paramtypes", [types_1.DatabaseConfig, log_provider_1.LogProvider])
+    __metadata("design:paramtypes", [typeof (_a = typeof types_1.DatabaseConfig !== "undefined" && types_1.DatabaseConfig) === "function" && _a || Object, typeof (_b = typeof log_provider_1.LogProvider !== "undefined" && log_provider_1.LogProvider) === "function" && _b || Object])
 ], Connection);
+var _a, _b;
 //# sourceMappingURL=connection.js.map

@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as Types from './types';
 import * as serializers from './log.serializers';
+import { Constants } from './string.constants';
 
 export class LogProvider {
 
@@ -28,7 +29,7 @@ export class LogProvider {
     }
 
     factory (logger: Bunyan = undefined): Bunyan {
-        const STR_ROOT_PATH_VAR: string = 'ROOT_PATH';
+        // const STR_ROOT_PATH_VAR: string = 'ROOT_PATH';
         if (logger !== undefined) {
             let child = logger.child({ctx: this.callerContext()});
             return this.addSerializers(child);
@@ -36,7 +37,8 @@ export class LogProvider {
         if (this._instance !== undefined) {
             return this._instance;
         }
-        let LOG_PATH = path.join(process.env[STR_ROOT_PATH_VAR], path.sep, 'storage', path.sep, 'logs');
+
+        let LOG_PATH = path.join(process.env[Constants.VAR_ROOT_PATH], '..', 'storage', 'logs');
 
         if (fs.existsSync(LOG_PATH) === false) {
             LOG_PATH.split('/')

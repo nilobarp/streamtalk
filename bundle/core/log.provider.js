@@ -4,6 +4,7 @@ const Bunyan = require("bunyan");
 const path = require("path");
 const fs = require("fs");
 const serializers = require("./log.serializers");
+const string_constants_1 = require("./string.constants");
 class LogProvider {
     get logFolder() {
         return this._logFolder;
@@ -21,7 +22,6 @@ class LogProvider {
         return this._instance;
     }
     factory(logger = undefined) {
-        const STR_ROOT_PATH_VAR = 'ROOT_PATH';
         if (logger !== undefined) {
             let child = logger.child({ ctx: this.callerContext() });
             return this.addSerializers(child);
@@ -29,7 +29,7 @@ class LogProvider {
         if (this._instance !== undefined) {
             return this._instance;
         }
-        let LOG_PATH = path.join(process.env[STR_ROOT_PATH_VAR], path.sep, 'storage', path.sep, 'logs');
+        let LOG_PATH = path.join(process.env[string_constants_1.Constants.VAR_ROOT_PATH], '..', 'storage', 'logs');
         if (fs.existsSync(LOG_PATH) === false) {
             LOG_PATH.split('/')
                 .reduce((_path, _folder) => {
