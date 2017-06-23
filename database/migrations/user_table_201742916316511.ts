@@ -1,7 +1,7 @@
 /*Migration: /Users/nilotpal/code/heroel/hthero/database/migrations/user_table_201742916316511.js*/
 'use strict';
 
-var Bluebird = require('bluebird');
+import * as Bluebird from 'bluebird';
 
 module.exports = {
     up: function(query, DataTypes) {
@@ -13,19 +13,21 @@ module.exports = {
                 autoIncrement: true
             },
             username: {
-                type: DataTypes.TEXT
+                type: DataTypes.TEXT,
+                allowNull: false
             },
             password: {
-                type: DataTypes.TEXT
+                type: DataTypes.TEXT,
+                allowNull: false
             },
             createdAt: {
                 type: DataTypes.DATE,
-                allowNull: false,
+                allowNull: false
             },
             updatedAt: {
                 type: DataTypes.DATE,
-                allowNull: false,
-            },
+                allowNull: false
+            }
         });
     },
 

@@ -48,7 +48,7 @@ const umzug: any = new Umzug({
                 throw new Error('Migration tried to use old style "done" callback. Please upgrade to "umzug" and return a promise instead.');
             }
         ],
-        path: path.resolve(__dirname, '..', '..', 'database', 'migrations'),
+        path: path.resolve(__dirname, '..', 'database', 'migrations'),
         pattern: /\.js$/
     },
 
