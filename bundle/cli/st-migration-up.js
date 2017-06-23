@@ -25,14 +25,15 @@ if (!program.env) {
 const nodeEnv = process.env.NODE_ENV;
 process.env.NODE_ENV = program.env ? (program.env.toUpperCase() === 'PROD' ? '' : program.env) : '';
 let rootPath = path.resolve(__dirname, '..');
+let migrationsFolder = path.resolve(rootPath, '..', 'database', 'migrations');
 let bootstrap = new core_1.Bootstrap(rootPath);
 const user_model_1 = require("../app/models/user.model");
 const inventory_model_1 = require("../app/models/inventory.model");
 function migrator() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            yield user_model_1.User.sync({ force: false });
-            yield inventory_model_1.Inventory.sync({ force: false });
+            yield user_model_1.User.sync({ force: true });
+            yield inventory_model_1.Inventory.sync({ force: true });
         }
         catch (err) {
             throw err;

@@ -1,7 +1,10 @@
 import { DatabaseDialect } from './composite';
 
 export abstract class DatabaseConfig {
-    dialect: DatabaseDialect;
+    /**
+     * Tpye of database (postgres, sqlite or mysql)
+     */
+    dialect: string;
     /**
      * Database name
      */

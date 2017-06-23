@@ -2,7 +2,7 @@ import { Types } from '../core';
 import * as path from 'path';
 
 export class DatabaseConfig implements Types.DatabaseConfig {
-    dialect = Types.DatabaseDialect.sqlite;
+    dialect = process.env.DB_DIALECT;
     database = process.env.PGDATABASE;
     user = process.env.PGUSER;
     password = process.env.PGPASSWORD;

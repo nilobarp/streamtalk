@@ -1,10 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const core_1 = require("../core");
 const path = require("path");
 class DatabaseConfig {
     constructor() {
-        this.dialect = core_1.Types.DatabaseDialect.sqlite;
+        this.dialect = process.env.DB_DIALECT;
         this.database = process.env.PGDATABASE;
         this.user = process.env.PGUSER;
         this.password = process.env.PGPASSWORD;

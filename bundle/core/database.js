@@ -31,7 +31,7 @@ let Database = class Database {
         }
         else {
             this.logger.info('Initializing database connection');
-            if (this.dbConfig.dialect === types_1.DatabaseDialect.sqlite) {
+            if (this.dbConfig.dialect === 'sqlite') {
                 if (!this.dbConfig.storage) {
                     throw new Error('Storage location must be provided for sqlite');
                 }
@@ -49,7 +49,7 @@ let Database = class Database {
             }
             let _sequelize = new Sequelize(this.dbConfig.database, this.dbConfig.user, this.dbConfig.password, {
                 host: this.dbConfig.host,
-                dialect: types_1.DatabaseDialect[this.dbConfig.dialect],
+                dialect: this.dbConfig.dialect,
                 pool: {
                     max: this.dbConfig.max,
                     min: this.dbConfig.min,
@@ -59,6 +59,7 @@ let Database = class Database {
                 logging: this.logger.trace.bind(this.logger)
             });
             this.sequelize = _sequelize;
+            delete (this.dbConfig.password);
             return _sequelize;
         }
     }
@@ -70,6 +71,9 @@ let Database = class Database {
     }
     get instance() {
         return this.client();
+    }
+    get config() {
+        return this.dbConfig;
     }
 };
 Database = __decorate([

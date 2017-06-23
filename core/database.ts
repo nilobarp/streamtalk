@@ -3,7 +3,7 @@ import * as Bunyan from 'bunyan';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Container, AutoWired, Inject, Singleton } from 'typescript-ioc/es6';
-import { DatabaseConfig, DatabaseDialect } from './types';
+import { DatabaseConfig } from './types';
 import { LogProvider } from './log.provider';
 
 @Singleton
@@ -23,7 +23,7 @@ class Database {
             return this.sequelize;
         } else {
             this.logger.info('Initializing database connection');
-            if (this.dbConfig.dialect === DatabaseDialect.sqlite) {
+            if (this.dbConfig.dialect === 'sqlite') {
                 if (!this.dbConfig.storage) {
                     throw new Error('Storage location must be provided for sqlite');
                 }
@@ -45,7 +45,7 @@ class Database {
                                             this.dbConfig.password,
                                             {
                                                 host: this.dbConfig.host,
-                                                dialect: DatabaseDialect[this.dbConfig.dialect],
+                                                dialect: this.dbConfig.dialect,
                                                 pool: {
                                                     max: this.dbConfig.max,
                                                     min: this.dbConfig.min,
@@ -56,6 +56,7 @@ class Database {
                                             }
                                         );
             this.sequelize = _sequelize;
+            delete(this.dbConfig.password);
             return _sequelize;
         }
     }
@@ -68,19 +69,12 @@ class Database {
         this.sequelize.close();
     }
 
-    // async connect () {
-    //     let result = undefined;
-    //     try {
-    //         result = await this.sequelize.authenticate();
-    //         this.isConnected = true;
-    //     } catch (err) {
-    //         this.isConnected = false;
-    //         throw err;
-    //     }
-    // }
-
     get instance (): Sequelize.Sequelize {
         return this.client();
+    }
+
+    get config (): DatabaseConfig {
+        return this.dbConfig;
     }
 }
 

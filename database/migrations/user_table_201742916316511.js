@@ -1,16 +1,36 @@
 /*Migration: /Users/nilotpal/code/heroel/hthero/database/migrations/user_table_201742916316511.js*/
+'use strict';
 
-const up = `
-    CREATE TABLE users (
-        userid BIGSERIAL PRIMARY KEY,
-        username VARCHAR(20) UNIQUE NOT NULL,
-        password VARCHAR(100) UNIQUE NOT NULL
-    )
-`;
+var Bluebird = require('bluebird');
 
-const down = `
-    DROP TABLE users;
-`;
+module.exports = {
+    up: function(query, DataTypes) {
+        return query.createTable('users', {
+            id: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                primaryKey: true,
+                autoIncrement: true
+            },
+            username: {
+                type: DataTypes.TEXT
+            },
+            password: {
+                type: DataTypes.TEXT
+            },
+            createdAt: {
+                type: DataTypes.DATE,
+                allowNull: false,
+            },
+            updatedAt: {
+                type: DataTypes.DATE,
+                allowNull: false,
+            },
+        });
+    },
 
-module.exports.up = up;
-module.exports.down = down;
+    down: function(query, DataTypes) {
+        // return query.dropAllTables();
+        return query.dropTable('users');
+    }
+};
