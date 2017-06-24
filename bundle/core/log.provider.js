@@ -6,21 +6,6 @@ const fs = require("fs");
 const serializers = require("./log.serializers");
 const string_constants_1 = require("./string.constants");
 class LogProvider {
-    get logFolder() {
-        return this._logFolder;
-    }
-    set logFolder(v) {
-        this._logFolder = v;
-    }
-    get logLevel() {
-        return this._logLevel;
-    }
-    set logLevel(v) {
-        this._logLevel = v;
-    }
-    get instance() {
-        return this._instance;
-    }
     factory(logger = undefined) {
         if (logger !== undefined) {
             let child = logger.child({ ctx: this.callerContext() });
@@ -70,6 +55,8 @@ class LogProvider {
     }
     level() {
         const STR_DEBUG_VAR = 'DEBUG';
+        const STR_NODE_ENV = 'NODE_ENV';
+        let environment = process.env[STR_NODE_ENV] && process.env[STR_NODE_ENV].toUpperCase();
         let debugLevel = process.env[STR_DEBUG_VAR] && process.env[STR_DEBUG_VAR].toUpperCase();
         switch (debugLevel) {
             case 'TRACE':
@@ -84,8 +71,10 @@ class LogProvider {
                 return Bunyan.FATAL;
             case 'OFF':
                 return Bunyan.FATAL + 1;
-            default:
+            case 'ERROR':
                 return Bunyan.ERROR;
+            default:
+                return environment === 'TEST' ? Bunyan.FATAL + 1 : Bunyan.ERROR;
         }
     }
 }

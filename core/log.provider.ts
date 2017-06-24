@@ -6,30 +6,12 @@ import * as serializers from './log.serializers';
 import { Constants } from './string.constants';
 
 export class LogProvider {
-
-    private _logFolder: string;
-    public get logFolder(): string {
-        return this._logFolder;
-    }
-    public set logFolder(v: string) {
-        this._logFolder = v;
-    }
-
-    private _logLevel: Types.LogLevel;
-    public get logLevel(): Types.LogLevel {
-        return this._logLevel;
-    }
-    public set logLevel(v: Types.LogLevel) {
-        this._logLevel = v;
-    }
-
     private _instance: Bunyan;
-    public get instance(): Bunyan {
-        return this._instance;
-    }
+    // public get instance(): Bunyan {
+    //     return this._instance;
+    // }
 
     factory (logger: Bunyan = undefined): Bunyan {
-        // const STR_ROOT_PATH_VAR: string = 'ROOT_PATH';
         if (logger !== undefined) {
             let child = logger.child({ctx: this.callerContext()});
             return this.addSerializers(child);
@@ -83,6 +65,8 @@ export class LogProvider {
 
     private level () {
         const STR_DEBUG_VAR: string = 'DEBUG';
+        const STR_NODE_ENV: string = 'NODE_ENV';
+        let environment = process.env[STR_NODE_ENV] && process.env[STR_NODE_ENV].toUpperCase();
         let debugLevel = process.env[STR_DEBUG_VAR] && process.env[STR_DEBUG_VAR].toUpperCase();
         switch (debugLevel) {
             case 'TRACE':
@@ -97,8 +81,10 @@ export class LogProvider {
                 return Bunyan.FATAL;
             case 'OFF':
                 return Bunyan.FATAL + 1;
-            default:
+            case 'ERROR':
                 return Bunyan.ERROR;
+            default:
+                return environment === 'TEST' ? Bunyan.FATAL + 1 : Bunyan.ERROR;
         }
     }
 }

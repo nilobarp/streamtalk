@@ -13,16 +13,16 @@ const STR_COMMENTED_VAR_KEY: string = 'COMMENTED_VAR';
 
 let currentEnv: string = 'test';
 
-beforeEach(() => {
-    currentEnv = process.env[STR_NODE_ENV_VAR_KEY];
-});
-
-afterEach(() => {
-    cleanUp();
-    process.env[STR_NODE_ENV_VAR_KEY] = currentEnv;
-});
-
 describe ('ENV Helper', () => {
+    beforeEach(() => {
+        currentEnv = process.env[STR_NODE_ENV_VAR_KEY];
+    });
+
+    afterEach(() => {
+        cleanUp();
+        process.env[STR_NODE_ENV_VAR_KEY] = currentEnv;
+    });
+
     it ('loads .env from root', (done) => {
         genDotEnv('test', STR_ENV_VAR);
         loadEnvironment(path.resolve(__dirname));

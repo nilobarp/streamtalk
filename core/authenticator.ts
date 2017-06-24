@@ -1,6 +1,5 @@
 import { Container, AutoWired, Inject } from 'typescript-ioc/es6';
 import { AuthGuard } from './types';
-import { Request, Response, Next, RequestHandler } from 'restify';
 
 export class Authenticator {
     private authGuard: AuthGuard;

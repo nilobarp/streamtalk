@@ -11,7 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const es6_1 = require("typescript-ioc/es6");
 const i18n_provider_1 = require("./i18n.provider");
-class ErrorProvider extends Error {
+let ErrorProvider = class ErrorProvider extends Error {
     constructor() {
         super();
     }
@@ -19,10 +19,14 @@ class ErrorProvider extends Error {
         this.message = 'App secret key is not defined';
         throw this;
     }
-}
+};
 __decorate([
     es6_1.Inject,
     __metadata("design:type", i18n_provider_1.I18N)
 ], ErrorProvider.prototype, "i18n", void 0);
+ErrorProvider = __decorate([
+    es6_1.AutoWired,
+    __metadata("design:paramtypes", [])
+], ErrorProvider);
 exports.ErrorProvider = ErrorProvider;
 //# sourceMappingURL=error.provider.js.map

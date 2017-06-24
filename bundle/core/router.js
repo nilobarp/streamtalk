@@ -75,7 +75,6 @@ let Router = class Router {
             case 'OPTIONS':
                 server.opts({ path: route.path, name: route.name, version: route.versions }, route.middlewares, route.handler);
                 break;
-            case 'PUT':
             default:
                 server.get({ path: route.path, name: route.name, version: route.versions }, route.middlewares, route.handler);
                 break;

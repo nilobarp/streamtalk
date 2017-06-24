@@ -22,7 +22,7 @@ let HomeController = class HomeController {
     }
 };
 HomeController = __decorate([
-    core_1.Decorators.Controller,
+    core_1.Decorators.autobind,
     __param(0, core_1.IOC.Inject),
     __metadata("design:paramtypes", [core_1.LogProvider])
 ], HomeController);

@@ -1,7 +1,7 @@
 import * as Bunyan from 'bunyan';
 import { Types, IOC, LogProvider, Decorators } from '../../core';
 
-@Decorators.Controller
+@Decorators.autobind
 export class HomeController {
     private log: Bunyan;
     constructor (@IOC.Inject logProvider: LogProvider) {

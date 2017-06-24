@@ -7,8 +7,7 @@ import { Types, IOC, Decorators, LogProvider } from '../../core';
 import { sign, SignOptions } from 'jsonwebtoken';
 import { stdoutLogger } from '../../config/logger';
 
-// @IOC.AutoWired
-@Decorators.Controller
+@Decorators.autobind
 export class AuthController implements Types.AuthGuard {
     private config: Types.ServerConfig;
     private logger: Bunyan;

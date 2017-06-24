@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class I18N {
-    set setLocale(locale) {
+    set locale(locale) {
         this._locale = locale;
     }
     get locale() {
