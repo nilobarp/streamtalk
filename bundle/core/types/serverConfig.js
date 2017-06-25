@@ -1,6 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-class ServerConfig {
-}
+var ServerConfig = (function () {
+    function ServerConfig() {
+    }
+    return ServerConfig;
+}());
 exports.ServerConfig = ServerConfig;
 //# sourceMappingURL=serverConfig.js.map

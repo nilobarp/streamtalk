@@ -3,20 +3,23 @@ import * as chai from 'chai';
 import * as path from 'path';
 import * as request from 'supertest';
 import { Server } from 'restify';
-import { IOC } from '../../../core';
+import { IOC, loadEnvironment } from '../../../core';
 import { ServerConfig, AuthGuard } from '../../../core/types';
 import { AuthController } from '../../../app/controllers/auth-controller';
 import { StreamTalk } from '../../../core/streamtalk';
 import { Bootstrap } from '../../../core/bootstrap';
+import { Constants } from '../../../core/string.constants';
+import { UserModel } from '../../../app/models/user.model';
 
 const expect = chai.expect;
 let app: Server;
 let routesFolder = path.resolve(__dirname, '..', '..', 'artefacts', 'routes');
+const logPath = path.resolve(__dirname, '..', '..', 'artefacts', 'tmp');
+process.env[Constants.VAR_ROOT_PATH] = logPath;
 let authToken: string;
 
 describe ('authentication', () => {
     before((done) => {
-
         IOC.Container.bind(AuthGuard).to(AuthController);
 
         class MockConfig implements ServerConfig {
@@ -48,15 +51,30 @@ describe ('authentication', () => {
     });
 
     it ('generates JWT upon authentication', (done) => {
-        request(app)
-            .post('/login')
-            .auth('validusername', 'validpassword')
-            .expect(200)
-            .end(function (err, res) {
-                expect(validateJWTStructure(res.body)).to.be.equal(true);
-                authToken = res.body;
-                done();
-            });
+        const username: string = 'hthero';
+        const password: string = 'password';
+        UserModel.destroy({
+            truncate: true
+        }).then(() => {
+            UserModel.create({
+                username: username,
+                password: password
+            }).then(() => {
+                request(app)
+                    .post('/login')
+                    .auth(username, password)
+                    .expect(200)
+                    .end(function (err, res) {
+                        if (err) {
+                            done(err);
+                        } else {
+                            expect(validateJWTStructure(res.body)).to.be.equal(true);
+                            authToken = res.body;
+                            done();
+                        }
+                    });
+            }).catch(err => done(err));
+        }).catch (err => done(err));
     });
 
     it ('can access protected routes with auth token', (done) => {

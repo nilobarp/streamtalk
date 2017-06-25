@@ -12,29 +12,37 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const es6_1 = require("typescript-ioc/es6");
-const types_1 = require("./types");
-const log_provider_1 = require("./log.provider");
-const error_provider_1 = require("./error.provider");
-const router_1 = require("./router");
-const authenticator_1 = require("./authenticator");
-const restify_1 = require("restify");
-let StreamTalk = class StreamTalk {
-    constructor(config, router, auth, errors, logProvider) {
+var es6_1 = require("typescript-ioc/es6");
+var types_1 = require("./types");
+var log_provider_1 = require("./log.provider");
+var error_provider_1 = require("./error.provider");
+var router_1 = require("./router");
+var authenticator_1 = require("./authenticator");
+var restify_1 = require("restify");
+var StreamTalk = (function () {
+    function StreamTalk(config, router, auth, errors, logProvider) {
         this.config = config;
         this.router = router;
         this.auth = auth;
         this.errors = errors;
         this.logger = logProvider.factory();
     }
-    get instance() {
-        return this._instance;
-    }
-    set setConfig(v) {
-        this.config = v;
-    }
-    initialize() {
-        let options = {
+    Object.defineProperty(StreamTalk.prototype, "instance", {
+        get: function () {
+            return this._instance;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(StreamTalk.prototype, "setConfig", {
+        set: function (v) {
+            this.config = v;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    StreamTalk.prototype.initialize = function () {
+        var options = {
             certificate: this.config.sslCert,
             key: this.config.privateKey,
             name: 'StreamTalk',
@@ -47,35 +55,36 @@ let StreamTalk = class StreamTalk {
         this.setupMiddlewares();
         this.setupRouting();
         return options;
-    }
-    start(options) {
+    };
+    StreamTalk.prototype.start = function (options) {
+        var _this = this;
         try {
             this.verifyServerConfig();
-            let _port;
+            var _port = void 0;
             if (this.config.sslCert && this.config.privateKey) {
                 _port = this.config.port || 443;
             }
             else {
                 _port = this.config.port || 80;
             }
-            this._instance.listen(_port, this.config.bindIP, (err) => {
+            this._instance.listen(_port, this.config.bindIP, function (err) {
                 if (err) {
                     throw err;
                 }
-                this.logger.info('Server ready. Listening @ %s', this.instance.url);
+                _this.logger.info('Server ready. Listening @ %s', _this.instance.url);
             });
         }
         catch (err) {
             this.logger.fatal(err);
             throw err;
         }
-    }
-    verifyServerConfig() {
+    };
+    StreamTalk.prototype.verifyServerConfig = function () {
         if (this.config.secretKey === undefined || this.config.secretKey === '') {
             this.errors.throwAppSecretUndefined();
         }
-    }
-    setupMiddlewares() {
+    };
+    StreamTalk.prototype.setupMiddlewares = function () {
         this.instance.use(restify_1.acceptParser(this.instance.acceptable));
         this.instance.use(restify_1.authorizationParser());
         this.instance.use(restify_1.queryParser());
@@ -88,11 +97,12 @@ let StreamTalk = class StreamTalk {
         this.instance.on('after', restify_1.auditLogger({
             log: this.logger
         }));
-    }
-    setupRouting() {
+    };
+    StreamTalk.prototype.setupRouting = function () {
         this.router.setup(this.instance, this.config.routesFolder);
-    }
-};
+    };
+    return StreamTalk;
+}());
 StreamTalk = __decorate([
     es6_1.Singleton,
     __param(0, es6_1.Inject),

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const core_1 = require("../core");
-let loginController = core_1.IOC.Container.get(core_1.Types.AuthGuard);
+var core_1 = require("../core");
+var loginController = core_1.IOC.Container.get(core_1.Types.AuthGuard);
 exports.login = {
     method: 'POST',
     path: '/login',

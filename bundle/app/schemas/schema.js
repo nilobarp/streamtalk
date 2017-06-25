@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const graphql_1 = require("graphql");
-const TestEnum = new graphql_1.GraphQLEnumType({
+var graphql_1 = require("graphql");
+var TestEnum = new graphql_1.GraphQLEnumType({
     name: 'TestEnum',
     values: {
         RED: { description: 'A rosy color' },
@@ -9,9 +9,9 @@ const TestEnum = new graphql_1.GraphQLEnumType({
         BLUE: { description: 'A feeling you might have if you can\'t use GraphQL' }
     }
 });
-const TestInputObject = new graphql_1.GraphQLInputObjectType({
+var TestInputObject = new graphql_1.GraphQLInputObjectType({
     name: 'TestInput',
-    fields: () => ({
+    fields: function () { return ({
         string: {
             type: graphql_1.GraphQLString,
             description: 'Repeats back this string'
@@ -29,84 +29,84 @@ const TestInputObject = new graphql_1.GraphQLInputObjectType({
         listID: { type: new graphql_1.GraphQLList(graphql_1.GraphQLID) },
         listEnum: { type: new graphql_1.GraphQLList(TestEnum) },
         listObject: { type: new graphql_1.GraphQLList(TestInputObject) }
-    })
+    }); }
 });
-const TestInterface = new graphql_1.GraphQLInterfaceType({
+var TestInterface = new graphql_1.GraphQLInterfaceType({
     name: 'TestInterface',
     description: 'Test interface.',
-    fields: () => ({
+    fields: function () { return ({
         name: {
             type: graphql_1.GraphQLString,
             description: 'Common name string.'
         }
-    }),
-    resolveType: check => {
+    }); },
+    resolveType: function (check) {
         return check ? UnionFirst : UnionSecond;
     }
 });
-const UnionFirst = new graphql_1.GraphQLObjectType({
+var UnionFirst = new graphql_1.GraphQLObjectType({
     name: 'First',
-    fields: () => ({
+    fields: function () { return ({
         name: {
             type: graphql_1.GraphQLString,
             description: 'Common name string for UnionFirst.'
         },
         first: {
             type: new graphql_1.GraphQLList(TestInterface),
-            resolve: () => { return true; }
+            resolve: function () { return true; }
         }
-    }),
+    }); },
     interfaces: [TestInterface]
 });
-const UnionSecond = new graphql_1.GraphQLObjectType({
+var UnionSecond = new graphql_1.GraphQLObjectType({
     name: 'Second',
-    fields: () => ({
+    fields: function () { return ({
         name: {
             type: graphql_1.GraphQLString,
             description: 'Common name string for UnionFirst.'
         },
         second: {
             type: TestInterface,
-            resolve: () => { return false; }
+            resolve: function () { return false; }
         }
-    }),
+    }); },
     interfaces: [TestInterface]
 });
-const TestUnion = new graphql_1.GraphQLUnionType({
+var TestUnion = new graphql_1.GraphQLUnionType({
     name: 'TestUnion',
     types: [UnionFirst, UnionSecond],
-    resolveType() {
+    resolveType: function () {
         return UnionFirst;
     }
 });
-const TestType = new graphql_1.GraphQLObjectType({
+var TestType = new graphql_1.GraphQLObjectType({
     name: 'Test',
-    fields: () => ({
+    fields: function () { return ({
         test: {
             type: TestType,
             description: '`test` field from `Test` type.',
-            resolve: () => ({})
+            resolve: function () { return ({}); }
         },
         union: {
             type: TestUnion,
             description: '> union field from Test type, block-quoted.',
-            resolve: () => ({})
+            resolve: function () { return ({}); }
         },
         id: {
             type: graphql_1.GraphQLID,
             description: 'id field from Test type.',
-            resolve: () => 'abc123'
+            resolve: function () { return 'abc123'; }
         },
         isTest: {
             type: graphql_1.GraphQLBoolean,
             description: 'Is this a test schema? Sure it is.',
-            resolve: () => {
+            resolve: function () {
                 return true;
             }
         },
         hasArgs: {
             type: graphql_1.GraphQLString,
-            resolve(value, args) {
+            resolve: function (value, args) {
                 return JSON.stringify(args);
             },
             args: {
@@ -126,9 +126,9 @@ const TestType = new graphql_1.GraphQLObjectType({
                 listObject: { type: new graphql_1.GraphQLList(TestInputObject) }
             }
         }
-    })
+    }); }
 });
-const TestMutationType = new graphql_1.GraphQLObjectType({
+var TestMutationType = new graphql_1.GraphQLObjectType({
     name: 'MutationType',
     description: 'This is a simple mutation type',
     fields: {
@@ -141,7 +141,7 @@ const TestMutationType = new graphql_1.GraphQLObjectType({
         }
     }
 });
-const TestSubscriptionType = new graphql_1.GraphQLObjectType({
+var TestSubscriptionType = new graphql_1.GraphQLObjectType({
     name: 'SubscriptionType',
     description: 'This is a simple subscription type',
     fields: {
@@ -154,7 +154,7 @@ const TestSubscriptionType = new graphql_1.GraphQLObjectType({
         }
     }
 });
-const myTestSchema = new graphql_1.GraphQLSchema({
+var myTestSchema = new graphql_1.GraphQLSchema({
     query: TestType,
     mutation: TestMutationType,
     subscription: TestSubscriptionType

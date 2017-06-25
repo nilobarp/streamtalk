@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const program = require("commander");
-const path = require("path");
-const child_process = require("child_process");
-const Promise = require("bluebird");
-const Umzug = require("umzug");
-const core_1 = require("../core");
+var program = require("commander");
+var path = require("path");
+var child_process = require("child_process");
+var Promise = require("bluebird");
+var Umzug = require("umzug");
+var core_1 = require("../core");
 require("../config/ioc-bindings");
 program
     .usage('-e <environment>')
@@ -17,16 +17,16 @@ if (!program.env) {
     program.outputHelp();
     process.exit(-1);
 }
-const nodeEnv = process.env.NODE_ENV;
+var nodeEnv = process.env.NODE_ENV;
 process.env.NODE_ENV = program.env ? (program.env.toUpperCase() === 'PROD' ? '' : program.env) : '';
-let rootPath = path.resolve(__dirname, '..');
-let migrationsFolder = path.resolve(rootPath, '..', 'database', 'migrations');
-let bootstrap = new core_1.Bootstrap(rootPath);
-let database = core_1.IOC.Container.get(core_1.Database);
-const sequelize = database.instance;
-const DB_NAME = database.config.database;
-const DB_USER = database.config.user;
-const umzug = new Umzug({
+var rootPath = path.resolve(__dirname, '..');
+var migrationsFolder = path.resolve(rootPath, '..', 'database', 'migrations');
+var bootstrap = new core_1.Bootstrap(rootPath);
+var database = core_1.IOC.Container.get(core_1.Database);
+var sequelize = database.instance;
+var DB_NAME = database.config.database;
+var DB_USER = database.config.user;
+var umzug = new Umzug({
     storage: 'sequelize',
     storageOptions: {
         sequelize: sequelize
@@ -48,7 +48,7 @@ const umzug = new Umzug({
 });
 function logUmzugEvent(eventName) {
     return function (name, migration) {
-        console.log(`${name} ${eventName}`);
+        console.log(name + " " + eventName);
     };
 }
 umzug.on('migrating', logUmzugEvent('migrating'));
@@ -56,31 +56,32 @@ umzug.on('migrated', logUmzugEvent('migrated'));
 umzug.on('reverting', logUmzugEvent('reverting'));
 umzug.on('reverted', logUmzugEvent('reverted'));
 function cmdStatus() {
-    let result = {};
+    var result = {};
     return umzug.executed()
-        .then(executed => {
+        .then(function (executed) {
         result.executed = executed;
         return umzug.pending();
-    }).then(pending => {
+    }).then(function (pending) {
         result.pending = pending;
         return result;
-    }).then(({ executed, pending }) => {
-        executed = executed.map(m => {
+    }).then(function (_a) {
+        var executed = _a.executed, pending = _a.pending;
+        executed = executed.map(function (m) {
             m.name = path.basename(m.file, '.js');
             return m;
         });
-        pending = pending.map(m => {
+        pending = pending.map(function (m) {
             m.name = path.basename(m.file, '.js');
             return m;
         });
-        const current = executed.length > 0 ? executed[0].file : '<NO_MIGRATIONS>';
-        const status = {
+        var current = executed.length > 0 ? executed[0].file : '<NO_MIGRATIONS>';
+        var status = {
             current: current,
-            executed: executed.map(m => m.file),
-            pending: pending.map(m => m.file)
+            executed: executed.map(function (m) { return m.file; }),
+            pending: pending.map(function (m) { return m.file; })
         };
         console.log(JSON.stringify(status, undefined, 2));
-        return { executed, pending };
+        return { executed: executed, pending: pending };
     });
 }
 function cmdMigrate() {
@@ -88,11 +89,12 @@ function cmdMigrate() {
 }
 function cmdMigrateNext() {
     return cmdStatus()
-        .then(({ executed, pending }) => {
+        .then(function (_a) {
+        var executed = _a.executed, pending = _a.pending;
         if (pending.length === 0) {
             return Promise.reject(new Error('No pending migrations'));
         }
-        const next = pending[0].name;
+        var next = pending[0].name;
         return umzug.up({ to: next });
     });
 }
@@ -101,22 +103,23 @@ function cmdReset() {
 }
 function cmdResetPrev() {
     return cmdStatus()
-        .then(({ executed, pending }) => {
+        .then(function (_a) {
+        var executed = _a.executed, pending = _a.pending;
         if (executed.length === 0) {
             return Promise.reject(new Error('Already at initial state'));
         }
-        const prev = executed[executed.length - 1].name;
+        var prev = executed[executed.length - 1].name;
         return umzug.down({ to: prev });
     });
 }
 function cmdHardReset() {
-    return new Promise((resolve, reject) => {
-        setImmediate(() => {
+    return new Promise(function (resolve, reject) {
+        setImmediate(function () {
             try {
-                console.log(`dropdb ${DB_NAME}`);
-                child_process.spawnSync(`dropdb ${DB_NAME}`);
-                console.log(`createdb ${DB_NAME} --username ${DB_USER}`);
-                child_process.spawnSync(`createdb ${DB_NAME} --username ${DB_USER}`);
+                console.log("dropdb " + DB_NAME);
+                child_process.spawnSync("dropdb " + DB_NAME);
+                console.log("createdb " + DB_NAME + " --username " + DB_USER);
+                child_process.spawnSync("createdb " + DB_NAME + " --username " + DB_USER);
                 resolve();
             }
             catch (e) {
@@ -126,9 +129,9 @@ function cmdHardReset() {
         });
     });
 }
-const cmd = process.argv[2].trim();
-let executedCmd;
-console.log(`${cmd.toUpperCase()} BEGIN`);
+var cmd = process.argv[2].trim();
+var executedCmd;
+console.log(cmd.toUpperCase() + " BEGIN");
 switch (cmd) {
     case 'status':
         executedCmd = cmdStatus();
@@ -153,27 +156,27 @@ switch (cmd) {
         executedCmd = cmdHardReset();
         break;
     default:
-        console.log(`invalid cmd: ${cmd}`);
+        console.log("invalid cmd: " + cmd);
         process.exit(1);
 }
 executedCmd
-    .then((result) => {
-    const doneStr = `${cmd.toUpperCase()} DONE`;
+    .then(function (result) {
+    var doneStr = cmd.toUpperCase() + " DONE";
     console.log(doneStr);
     console.log('='.repeat(doneStr.length));
 })
-    .catch(err => {
-    const errorStr = `${cmd.toUpperCase()} ERROR`;
+    .catch(function (err) {
+    var errorStr = cmd.toUpperCase() + " ERROR";
     console.log(errorStr);
     console.log('='.repeat(errorStr.length));
     console.log(err);
     console.log('='.repeat(errorStr.length));
 })
-    .then(() => {
+    .then(function () {
     if (cmd !== 'status' && cmd !== 'reset-hard') {
         return cmdStatus();
     }
     return Promise.resolve();
 })
-    .then(() => process.exit(0));
+    .then(function () { return process.exit(0); });
 //# sourceMappingURL=migrator.js.map

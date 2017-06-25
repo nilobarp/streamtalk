@@ -12,46 +12,46 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const path = require("path");
-const fs = require("fs");
-const es6_1 = require("typescript-ioc/es6");
-const string_constants_1 = require("./string.constants");
-const log_provider_1 = require("./log.provider");
-const authenticator_1 = require("./authenticator");
-let Router = class Router {
-    constructor(auth, logProvider) {
+var path = require("path");
+var fs = require("fs");
+var es6_1 = require("typescript-ioc/es6");
+var string_constants_1 = require("./string.constants");
+var log_provider_1 = require("./log.provider");
+var authenticator_1 = require("./authenticator");
+var Router = (function () {
+    function Router(auth, logProvider) {
         this.auth = auth;
         this.logger = logProvider.factory();
     }
-    setup(server, routesDir) {
-        let rootPath = process.env[string_constants_1.Constants.VAR_ROOT_PATH] || '';
-        let absRoutesPath = path.resolve(rootPath, routesDir);
+    Router.prototype.setup = function (server, routesDir) {
+        var rootPath = process.env[string_constants_1.Constants.VAR_ROOT_PATH] || '';
+        var absRoutesPath = path.resolve(rootPath, routesDir);
         if (fs.existsSync(absRoutesPath) === false) {
             this.logger.fatal('Routes folder not found [%s]', absRoutesPath);
             this.logger.fatal('Edit config/app.ts to specify the correct path.');
             throw new Error('Routes not defined');
         }
-        let routeFiles = fs.readdirSync(absRoutesPath);
-        for (let key in routeFiles) {
+        var routeFiles = fs.readdirSync(absRoutesPath);
+        for (var key in routeFiles) {
             if (routeFiles[key].indexOf('.js.map') > 0) {
                 continue;
             }
-            let filePath = path.join(absRoutesPath, routeFiles[key]);
+            var filePath = path.join(absRoutesPath, routeFiles[key]);
             filePath = filePath.substr(0, filePath.lastIndexOf('.js'));
-            let file = require(filePath);
-            for (let route in file) {
+            var file = require(filePath);
+            for (var route in file) {
                 if (this.valid(file[route])) {
                     this.make(server, file[route]);
                 }
             }
         }
         return server;
-    }
-    make(server, route) {
+    };
+    Router.prototype.make = function (server, route) {
         route.middlewares = route.middlewares || [];
         if (route.protected === true) {
             if (this.auth.enabled === true) {
-                let authHandler = this.auth.authenticate();
+                var authHandler = this.auth.authenticate();
                 route.middlewares.unshift(authHandler);
             }
             else {
@@ -80,11 +80,12 @@ let Router = class Router {
                 break;
         }
         return server;
-    }
-    valid(route) {
+    };
+    Router.prototype.valid = function (route) {
         return 'path' in route && 'handler' in route;
-    }
-};
+    };
+    return Router;
+}());
 Router = __decorate([
     __param(0, es6_1.Inject),
     __param(1, es6_1.Inject),

@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const core_1 = require("../core");
-const home_controller_1 = require("../app/controllers/home-controller");
-let controller = core_1.IOC.Container.get(home_controller_1.HomeController);
-let home = {
+var core_1 = require("../core");
+var home_controller_1 = require("../app/controllers/home-controller");
+var controller = core_1.IOC.Container.get(home_controller_1.HomeController);
+var home = {
     method: 'GET',
     path: '/',
     name: 'home',

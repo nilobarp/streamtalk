@@ -3,12 +3,29 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as notifier from 'node-notifier';
 import * as glob from 'glob';
+import { Constants } from '../core/string.constants';
+import { loadEnvironment, IOC } from '../core';
+import { DatabaseConfig } from '../core/types';
 
-let mocha = new Mocha();
-let testDir = path.join(__dirname, 'spec');
+const mocha = new Mocha();
+
+let testDir = path.join(__dirname);
 let failureCount: number = 0;
 let checkImage: string = path.join(testDir, '..', '..', '..', 'test', 'artefacts', 'icons', 'pass.png');
 let crossImage: string = path.join(testDir, '..', '..', '..', 'test', 'artefacts', 'icons', 'fail.png');
+
+loadEnvironment(path.join(__dirname, '..', '..'));
+process.env[Constants.VAR_ROOT_PATH] = path.join(__dirname, 'artefacts', 'tmp');
+
+class MockDbConfig implements DatabaseConfig {
+    dialect = process.env.DB_DIALECT;
+    database = process.env.PGDATABASE;
+    user = process.env.PGUSER;
+    password = process.env.PGPASSWORD;
+    storage = path.resolve(__dirname, '..', '..', 'storage', 'db', 'app.sqlite');
+}
+
+IOC.Container.bind(DatabaseConfig).to(MockDbConfig).scope(IOC.Scope.Local);
 
 console.log('/* ---- ----- ----- Test suites ----- ----- ----- */');
 
@@ -27,7 +44,6 @@ glob(`${testDir}/**/*.test.js`, (err, matches: string[]) => {
 
 function run () {
     const pattern: string = process.argv.slice(2).join('|');
-    // console.log(pattern);
     mocha.grep(new RegExp(pattern, 'i'));
 
     let runner: any = mocha.run( failures => {

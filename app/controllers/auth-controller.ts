@@ -6,6 +6,7 @@ import { Strategy as JwtStrategy, ExtractJwt, StrategyOptions } from 'passport-j
 import { Types, IOC, Decorators, LogProvider } from '../../core';
 import { sign, SignOptions } from 'jsonwebtoken';
 import { stdoutLogger } from '../../config/logger';
+import { UserModel } from '../models/user.model';
 
 @Decorators.autobind
 export class AuthController implements Types.AuthGuard {
@@ -21,16 +22,8 @@ export class AuthController implements Types.AuthGuard {
     }
 
     initialize (options?: any): Function {
-        /*passport.use(new BasicStrategy((username, password, done) => {
-            console.log(username);
-                if (username === 'validusername' && password === 'validpassword') {
-                    return done(null, {user_id: 1});
-                }
-                done(null, false);
-            })
-        );*/
         let opts: StrategyOptions = {
-            jwtFromRequest: this.extractJwt, // ExtractJwt.fromAuthHeader(),
+            jwtFromRequest: this.extractJwt,
             secretOrKey: this.config.secretKey
             // issuer: 'heroel.com'
         };
@@ -53,17 +46,21 @@ export class AuthController implements Types.AuthGuard {
         let auth = req.authorization.basic;
         let {username, password} = auth;
         this.logger.info({user: auth});
-        if (username === 'validusername' && password === 'validpassword') {
-            let signOptions: SignOptions = {
-                // issuer: 'heroel.com'
-            };
-            let token = sign({user: 'validuser'}, this.config.secretKey, signOptions);
+        UserModel.findOne({
+            where: {username: username, password: password}
+        }).then((user) => {
+            if (!user) {
+                res.send(401);
+                next();
+            } else {
+                let signOptions: SignOptions = {
+                    // issuer: 'heroel.com'
+                };
+                let token = sign({user: 'validuser'}, this.config.secretKey, signOptions);
 
-            res.send(200, token);
-            next();
-        } else {
-            res.send(401);
-            next();
-        }
+                res.send(200, token);
+                next();
+            }
+        });
     }
 }

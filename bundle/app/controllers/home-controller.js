@@ -12,15 +12,16 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const core_1 = require("../../core");
-let HomeController = class HomeController {
-    constructor(logProvider) {
+var core_1 = require("../../core");
+var HomeController = (function () {
+    function HomeController(logProvider) {
     }
-    show(req, res, next) {
+    HomeController.prototype.show = function (req, res, next) {
         res.send(200, 'Hello world');
         next();
-    }
-};
+    };
+    return HomeController;
+}());
 HomeController = __decorate([
     core_1.Decorators.autobind,
     __param(0, core_1.IOC.Inject),

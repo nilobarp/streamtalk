@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const path = require("path");
-class DatabaseConfig {
-    constructor() {
+var path = require("path");
+var DatabaseConfig = (function () {
+    function DatabaseConfig() {
         this.dialect = process.env.DB_DIALECT;
         this.database = process.env.PGDATABASE;
         this.user = process.env.PGUSER;
@@ -11,6 +11,7 @@ class DatabaseConfig {
         this.max = 1;
         this.storage = path.resolve(__dirname, '..', '..', 'storage', 'db', 'app.sqlite');
     }
-}
+    return DatabaseConfig;
+}());
 exports.DatabaseConfig = DatabaseConfig;
 //# sourceMappingURL=database.js.map

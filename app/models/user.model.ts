@@ -4,7 +4,7 @@ import * as Sequelize from 'sequelize';
 const database: Database = IOC.Container.get(Database);
 const client = database.client();
 
-let User = client.define('user', {
+let UserModel = client.define('user', {
     username: {
         type: Sequelize.STRING
     },
@@ -14,5 +14,5 @@ let User = client.define('user', {
 });
 
 export {
-    User
+    UserModel
 };
