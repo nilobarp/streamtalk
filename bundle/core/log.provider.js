@@ -9,6 +9,7 @@ class LogProvider {
     factory(logger = undefined) {
         if (logger !== undefined) {
             let child = logger.child({ ctx: this.callerContext() });
+            child.level(this.level());
             return this.addSerializers(child);
         }
         if (this._instance !== undefined) {

@@ -24,7 +24,7 @@ let AuthController = class AuthController {
     }
     initialize(options) {
         let opts = {
-            jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeader(),
+            jwtFromRequest: this.extractJwt,
             secretOrKey: this.config.secretKey
         };
         passport.use('jwt', new passport_jwt_1.Strategy(opts, function (payload, done) {
@@ -42,7 +42,6 @@ let AuthController = class AuthController {
     authorize(req, res, next) {
         let auth = req.authorization.basic;
         let { username, password } = auth;
-        console.log(this.logger, username, password);
         this.logger.info({ user: auth });
         if (username === 'validusername' && password === 'validpassword') {
             let signOptions = {};

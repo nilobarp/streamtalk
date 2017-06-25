@@ -30,7 +30,7 @@ export class AuthController implements Types.AuthGuard {
             })
         );*/
         let opts: StrategyOptions = {
-            jwtFromRequest: ExtractJwt.fromAuthHeader(),
+            jwtFromRequest: this.extractJwt, // ExtractJwt.fromAuthHeader(),
             secretOrKey: this.config.secretKey
             // issuer: 'heroel.com'
         };
@@ -52,7 +52,6 @@ export class AuthController implements Types.AuthGuard {
     authorize (req, res, next) {
         let auth = req.authorization.basic;
         let {username, password} = auth;
-        console.log(this.logger, username, password);
         this.logger.info({user: auth});
         if (username === 'validusername' && password === 'validpassword') {
             let signOptions: SignOptions = {

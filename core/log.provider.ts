@@ -7,13 +7,11 @@ import { Constants } from './string.constants';
 
 export class LogProvider {
     private _instance: Bunyan;
-    // public get instance(): Bunyan {
-    //     return this._instance;
-    // }
 
     factory (logger: Bunyan = undefined): Bunyan {
         if (logger !== undefined) {
             let child = logger.child({ctx: this.callerContext()});
+            child.level(this.level());
             return this.addSerializers(child);
         }
         if (this._instance !== undefined) {
