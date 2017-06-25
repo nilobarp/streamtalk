@@ -42,12 +42,14 @@ Faker.seed(new Date().getDay());
 var seed = {
     environment: ['test', 'dev'],
     run: function () { return __awaiter(_this, void 0, void 0, function () {
-        var ROW_COUNT, i, err_1;
+        var UserModel, ROW_COUNT, i, err_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, user_model_1.UserModel.destroy({
-                        truncate: true
-                    })];
+                case 0:
+                    UserModel = user_model_1.UserModelFactory();
+                    return [4 /*yield*/, UserModel.destroy({
+                            truncate: true
+                        })];
                 case 1:
                     _a.sent();
                     ROW_COUNT = 10;
@@ -58,7 +60,7 @@ var seed = {
                     _a.label = 3;
                 case 3:
                     _a.trys.push([3, 5, , 6]);
-                    return [4 /*yield*/, user_model_1.UserModel.create({
+                    return [4 /*yield*/, UserModel.create({
                             username: Faker.internet.userName(),
                             password: Faker.internet.password()
                         })];

@@ -13,6 +13,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var es6_1 = require("typescript-ioc/es6");
+var responseTime = require("response-time");
 var types_1 = require("./types");
 var log_provider_1 = require("./log.provider");
 var error_provider_1 = require("./error.provider");
@@ -91,6 +92,7 @@ var StreamTalk = (function () {
         this.instance.use(restify_1.jsonp());
         this.instance.use(restify_1.gzipResponse());
         this.instance.use(restify_1.bodyParser());
+        this.instance.use(responseTime());
         if (this.auth.enabled) {
             this.instance.use(this.auth.initialize());
         }

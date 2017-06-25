@@ -29,7 +29,7 @@ var AuthController = (function () {
             secretOrKey: this.config.secretKey
         };
         passport.use('jwt', new passport_jwt_1.Strategy(opts, function (payload, done) {
-            done(undefined, true);
+            done(undefined, payload);
         }));
         return passport.initialize();
     };
@@ -43,18 +43,26 @@ var AuthController = (function () {
     AuthController.prototype.authorize = function (req, res, next) {
         var _this = this;
         var auth = req.authorization.basic;
+        if (!auth) {
+            res.header('WWW-Authenticate', 'Basic');
+            res.send(401, 'Unauthorized');
+            return;
+        }
         var username = auth.username, password = auth.password;
         this.logger.info({ user: auth });
-        user_model_1.UserModel.findOne({
+        var UserModel = user_model_1.UserModelFactory();
+        UserModel.findOne({
             where: { username: username, password: password }
         }).then(function (user) {
             if (!user) {
-                res.send(401);
+                res.send(401, 'Unauthorized');
                 next();
             }
             else {
-                var signOptions = {};
-                var token = jsonwebtoken_1.sign({ user: 'validuser' }, _this.config.secretKey, signOptions);
+                var signOptions = {
+                    expiresIn: '1m'
+                };
+                var token = jsonwebtoken_1.sign({ user: user.id }, _this.config.secretKey, signOptions);
                 res.send(200, token);
                 next();
             }

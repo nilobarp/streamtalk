@@ -1,9 +1,10 @@
-import { UserModel } from '../../app/models/user.model';
+import { UserModelFactory } from '../../app/models/user.model';
 import * as Faker from 'faker';
 Faker.seed(new Date().getDay());
 const seed = {
     environment: ['test', 'dev'],
     run: async () => {
+        let UserModel = UserModelFactory();
         await UserModel.destroy({
             truncate: true
         });

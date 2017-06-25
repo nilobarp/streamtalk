@@ -1,18 +1,22 @@
 import { Database, IOC } from '../../core';
 import * as Sequelize from 'sequelize';
 
-const database: Database = IOC.Container.get(Database);
-const client = database.client();
+function factory () {
+    const database: Database = IOC.Container.get(Database);
+    const client = database.client();
 
-let UserModel = client.define('user', {
-    username: {
-        type: Sequelize.STRING
-    },
-    password: {
-        type: Sequelize.STRING
-    }
-});
+    let UserModel = client.define('user', {
+        username: {
+            type: Sequelize.STRING
+        },
+        password: {
+            type: Sequelize.STRING
+        }
+    });
+
+    return UserModel;
+}
 
 export {
-    UserModel
+    factory as UserModelFactory
 };

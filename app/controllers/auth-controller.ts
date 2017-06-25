@@ -6,7 +6,7 @@ import { Strategy as JwtStrategy, ExtractJwt, StrategyOptions } from 'passport-j
 import { Types, IOC, Decorators, LogProvider } from '../../core';
 import { sign, SignOptions } from 'jsonwebtoken';
 import { stdoutLogger } from '../../config/logger';
-import { UserModel } from '../models/user.model';
+import { UserModelFactory } from '../models/user.model';
 
 @Decorators.autobind
 export class AuthController implements Types.AuthGuard {
@@ -25,10 +25,9 @@ export class AuthController implements Types.AuthGuard {
         let opts: StrategyOptions = {
             jwtFromRequest: this.extractJwt,
             secretOrKey: this.config.secretKey
-            // issuer: 'heroel.com'
         };
         passport.use('jwt', new JwtStrategy(opts, function (payload, done) {
-            done(undefined, true);
+            done(undefined, payload);
         }));
         return passport.initialize();
     }
@@ -44,19 +43,25 @@ export class AuthController implements Types.AuthGuard {
 
     authorize (req, res, next) {
         let auth = req.authorization.basic;
+        if (!auth) {
+            res.header('WWW-Authenticate', 'Basic');
+            res.send(401, 'Unauthorized');
+            return;
+        }
         let {username, password} = auth;
         this.logger.info({user: auth});
+        let UserModel = UserModelFactory();
         UserModel.findOne({
             where: {username: username, password: password}
-        }).then((user) => {
+        }).then((user: any) => {
             if (!user) {
-                res.send(401);
+                res.send(401, 'Unauthorized');
                 next();
             } else {
                 let signOptions: SignOptions = {
-                    // issuer: 'heroel.com'
+                    expiresIn: '1m'
                 };
-                let token = sign({user: 'validuser'}, this.config.secretKey, signOptions);
+                let token = sign({user: user.id}, this.config.secretKey, signOptions);
 
                 res.send(200, token);
                 next();

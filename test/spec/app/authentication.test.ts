@@ -9,7 +9,7 @@ import { AuthController } from '../../../app/controllers/auth-controller';
 import { StreamTalk } from '../../../core/streamtalk';
 import { Bootstrap } from '../../../core/bootstrap';
 import { Constants } from '../../../core/string.constants';
-import { UserModel } from '../../../app/models/user.model';
+import { UserModelFactory } from '../../../app/models/user.model';
 
 const expect = chai.expect;
 let app: Server;
@@ -43,6 +43,13 @@ describe ('authentication', () => {
         done();
     });
 
+    it ('expects basic auth headers', (done) => {
+        request(app)
+            .post('/login')
+            .expect(401)
+            .expect('WWW-Authenticate', 'Basic', done);
+    });
+
     it ('returns 401 for invalid credentials', (done) => {
         request(app)
             .post('/login')
@@ -53,6 +60,7 @@ describe ('authentication', () => {
     it ('generates JWT upon authentication', (done) => {
         const username: string = 'hthero';
         const password: string = 'password';
+        let UserModel = UserModelFactory();
         UserModel.destroy({
             truncate: true
         }).then(() => {
