@@ -1,5 +1,6 @@
-'use strict';
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var tableName = '';
 module.exports = {
     up: function (query, DataTypes) {
         return query.createTable('users', {
@@ -31,4 +32,4 @@ module.exports = {
         return query.dropTable('users');
     }
 };
-//# sourceMappingURL=user_table_201742916316511.js.map
+//# sourceMappingURL=20170628142431338_user_table.js.map

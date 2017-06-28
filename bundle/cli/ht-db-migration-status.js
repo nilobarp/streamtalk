@@ -3,7 +3,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var program = require("commander");
 var path = require("path");
-var child_process = require("child_process");
 var Promise = require("bluebird");
 var Umzug = require("umzug");
 var core_1 = require("../core");
@@ -41,9 +40,6 @@ var umzug = new Umzug({
         ],
         path: path.resolve(__dirname, '..', 'database', 'migrations'),
         pattern: /\.js$/
-    },
-    logging: function () {
-        console.log.apply(undefined, arguments);
     }
 });
 function logUmzugEvent(eventName) {
@@ -51,10 +47,6 @@ function logUmzugEvent(eventName) {
         console.log(name + " " + eventName);
     };
 }
-umzug.on('migrating', logUmzugEvent('migrating'));
-umzug.on('migrated', logUmzugEvent('migrated'));
-umzug.on('reverting', logUmzugEvent('reverting'));
-umzug.on('reverted', logUmzugEvent('reverted'));
 function cmdStatus() {
     var result = {};
     return umzug.executed()
@@ -84,84 +76,12 @@ function cmdStatus() {
         return { executed: executed, pending: pending };
     });
 }
-function cmdMigrate() {
-    return umzug.up();
-}
-function cmdMigrateNext() {
-    return cmdStatus()
-        .then(function (_a) {
-        var executed = _a.executed, pending = _a.pending;
-        if (pending.length === 0) {
-            return Promise.reject(new Error('No pending migrations'));
-        }
-        var next = pending[0].name;
-        return umzug.up({ to: next });
-    });
-}
-function cmdReset() {
-    return umzug.down({ to: 0 });
-}
-function cmdResetPrev() {
-    return cmdStatus()
-        .then(function (_a) {
-        var executed = _a.executed, pending = _a.pending;
-        if (executed.length === 0) {
-            return Promise.reject(new Error('Already at initial state'));
-        }
-        var prev = executed[executed.length - 1].name;
-        return umzug.down({ to: prev });
-    });
-}
-function cmdHardReset() {
-    return new Promise(function (resolve, reject) {
-        setImmediate(function () {
-            try {
-                console.log("dropdb " + DB_NAME);
-                child_process.spawnSync("dropdb " + DB_NAME);
-                console.log("createdb " + DB_NAME + " --username " + DB_USER);
-                child_process.spawnSync("createdb " + DB_NAME + " --username " + DB_USER);
-                resolve();
-            }
-            catch (e) {
-                console.log(e);
-                reject(e);
-            }
-        });
-    });
-}
-var cmd = process.argv[2].trim();
-var executedCmd;
+var cmd = 'status';
 console.log(cmd.toUpperCase() + " BEGIN");
-switch (cmd) {
-    case 'status':
-        executedCmd = cmdStatus();
-        break;
-    case 'up':
-    case 'migrate':
-        executedCmd = cmdMigrate();
-        break;
-    case 'next':
-    case 'migrate-next':
-        executedCmd = cmdMigrateNext();
-        break;
-    case 'down':
-    case 'reset':
-        executedCmd = cmdReset();
-        break;
-    case 'prev':
-    case 'reset-prev':
-        executedCmd = cmdResetPrev();
-        break;
-    case 'reset-hard':
-        executedCmd = cmdHardReset();
-        break;
-    default:
-        console.log("invalid cmd: " + cmd);
-        process.exit(1);
-}
+var executedCmd = cmdStatus();
 executedCmd
     .then(function (result) {
-    var doneStr = cmd.toUpperCase() + " DONE";
+    var doneStr = cmd.toUpperCase() + " DONE. ";
     console.log(doneStr);
     console.log('='.repeat(doneStr.length));
 })
@@ -173,10 +93,7 @@ executedCmd
     console.log('='.repeat(errorStr.length));
 })
     .then(function () {
-    if (cmd !== 'status' && cmd !== 'reset-hard') {
-        return cmdStatus();
-    }
     return Promise.resolve();
 })
     .then(function () { return process.exit(0); });
-//# sourceMappingURL=migrator.js.map
+//# sourceMappingURL=ht-db-migration-status.js.map
