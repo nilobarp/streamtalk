@@ -4,11 +4,14 @@ Docker images:
 
 postgres
 --------
-docker run -d -e POSTGRES_USER=user -e POSTGRES_PASSWORD=password --name ht-db -p 5432:5432 --restart=always postgres:alpine
+`docker run -d -e POSTGRES_USER=user -e POSTGRES_PASSWORD=password --name ht-db -p 5432:5432 --restart=always postgres:alpine`
 
 redis
 -----
-docker run -d --name ht-cache -p 6379:6379 --restart=always redis:alpine
+`docker run -d --name ht-cache -p 6379:6379 --restart=always redis:alpine`
+
+CLI symlink all commands:
+`for f in $(ls -d *.js); do ln -sf $f ${f%.*};done;`
 
 Token revocation:
 Token issue:
