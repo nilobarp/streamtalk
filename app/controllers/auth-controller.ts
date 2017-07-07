@@ -6,9 +6,9 @@ import { Strategy as JwtStrategy, ExtractJwt, StrategyOptions } from 'passport-j
 import { Types, IOC, Decorators, LogProvider } from '../../core';
 import { sign, SignOptions } from 'jsonwebtoken';
 import { stdoutLogger } from '../../config/logger';
+import { UserModelFactory } from '../models/user.model';
 
-// @IOC.AutoWired
-@Decorators.Controller
+@Decorators.autobind
 export class AuthController implements Types.AuthGuard {
     private config: Types.ServerConfig;
     private logger: Bunyan;
@@ -22,21 +22,12 @@ export class AuthController implements Types.AuthGuard {
     }
 
     initialize (options?: any): Function {
-        /*passport.use(new BasicStrategy((username, password, done) => {
-            console.log(username);
-                if (username === 'validusername' && password === 'validpassword') {
-                    return done(null, {user_id: 1});
-                }
-                done(null, false);
-            })
-        );*/
         let opts: StrategyOptions = {
-            jwtFromRequest: ExtractJwt.fromAuthHeader(),
+            jwtFromRequest: this.extractJwt,
             secretOrKey: this.config.secretKey
-            // issuer: 'heroel.com'
         };
         passport.use('jwt', new JwtStrategy(opts, function (payload, done) {
-            done(undefined, true);
+            done(undefined, payload);
         }));
         return passport.initialize();
     }
@@ -52,20 +43,29 @@ export class AuthController implements Types.AuthGuard {
 
     authorize (req, res, next) {
         let auth = req.authorization.basic;
-        let {username, password} = auth;
-        console.log(this.logger, username, password);
-        this.logger.info({user: auth});
-        if (username === 'validusername' && password === 'validpassword') {
-            let signOptions: SignOptions = {
-                // issuer: 'heroel.com'
-            };
-            let token = sign({user: 'validuser'}, this.config.secretKey, signOptions);
-
-            res.send(200, token);
-            next();
-        } else {
-            res.send(401);
-            next();
+        if (!auth) {
+            res.header('WWW-Authenticate', 'Basic');
+            res.send(401, 'Unauthorized');
+            return;
         }
+        let {username, password} = auth;
+        this.logger.info({user: auth});
+        let UserModel = UserModelFactory();
+        UserModel.findOne({
+            where: {username: username, password: password}
+        }).then((user: any) => {
+            if (!user) {
+                res.send(401, 'Unauthorized');
+                next();
+            } else {
+                let signOptions: SignOptions = {
+                    expiresIn: '1m'
+                };
+                let token = sign({user: user.id}, this.config.secretKey, signOptions);
+
+                res.send(200, token);
+                next();
+            }
+        });
     }
 }

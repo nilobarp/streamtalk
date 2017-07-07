@@ -11,6 +11,7 @@ import '../config/ioc-bindings';
 program
     .usage('-e <environment>')
     .option('-e, --env [environment]', '(Required) Environment for which migrations are to be executed')
+    .option('-h, --hard', 'Hard reset database')
     .parse(process.argv);
 
 if (!program.env) {
@@ -50,10 +51,6 @@ const umzug: any = new Umzug({
         ],
         path: path.resolve(__dirname, '..', 'database', 'migrations'),
         pattern: /\.js$/
-    },
-
-    logging: function() {
-        console.log.apply(undefined, arguments);
     }
 });
 
@@ -62,73 +59,11 @@ function logUmzugEvent(eventName) {
         console.log(`${ name } ${ eventName }`);
     };
 }
-umzug.on('migrating', logUmzugEvent('migrating'));
-umzug.on('migrated',  logUmzugEvent('migrated'));
-umzug.on('reverting', logUmzugEvent('reverting'));
+
 umzug.on('reverted',  logUmzugEvent('reverted'));
-
-function cmdStatus() {
-    let result: any = {};
-
-    return umzug.executed()
-      .then(executed => {
-        result.executed = executed;
-        return umzug.pending();
-    }).then(pending => {
-        result.pending = pending;
-        return result;
-    }).then(({ executed, pending }) => {
-
-        executed = executed.map(m => {
-            m.name = path.basename(m.file, '.js');
-            return m;
-        });
-        pending = pending.map(m => {
-            m.name = path.basename(m.file, '.js');
-            return m;
-        });
-
-        const current = executed.length > 0 ? executed[0].file : '<NO_MIGRATIONS>';
-        const status = {
-            current: current,
-            executed: executed.map(m => m.file),
-            pending: pending.map(m => m.file)
-        };
-
-        console.log(JSON.stringify(status, undefined, 2));
-
-        return { executed, pending };
-    });
-}
-
-function cmdMigrate() {
-    return umzug.up();
-}
-
-function cmdMigrateNext() {
-    return cmdStatus()
-        .then(({ executed, pending }) => {
-            if (pending.length === 0) {
-                return Promise.reject(new Error('No pending migrations'));
-            }
-            const next = pending[0].name;
-            return umzug.up({ to: next });
-        });
-}
 
 function cmdReset() {
     return umzug.down({ to: 0 });
-}
-
-function cmdResetPrev() {
-    return cmdStatus()
-        .then(({ executed, pending }) => {
-            if (executed.length === 0) {
-                return Promise.reject(new Error('Already at initial state'));
-            }
-            const prev = executed[executed.length - 1].name;
-            return umzug.down({ to: prev });
-        });
 }
 
 function cmdHardReset() {
@@ -148,47 +83,22 @@ function cmdHardReset() {
     });
 }
 
-const cmd = process.argv[2].trim();
+let cmd;
 let executedCmd;
 
-console.log(`${ cmd.toUpperCase() } BEGIN`);
-switch(cmd) {
-    case 'status':
-        executedCmd = cmdStatus();
-        break;
-
-    case 'up':
-    case 'migrate':
-        executedCmd = cmdMigrate();
-        break;
-
-    case 'next':
-    case 'migrate-next':
-        executedCmd = cmdMigrateNext();
-        break;
-
-    case 'down':
-    case 'reset':
-        executedCmd = cmdReset();
-        break;
-
-    case 'prev':
-    case 'reset-prev':
-        executedCmd = cmdResetPrev();
-        break;
-
-    case 'reset-hard':
-        executedCmd = cmdHardReset();
-        break;
-
-    default:
-        console.log(`invalid cmd: ${ cmd }`);
-        process.exit(1);
+if (program.hard) {
+    cmd = 'hard reset';
+    console.log(`${ cmd.toUpperCase() } BEGIN`);
+    executedCmd = cmdHardReset();
+} else {
+    cmd = 'reset';
+    console.log(`${ cmd.toUpperCase() } BEGIN`);
+    executedCmd = cmdReset();
 }
 
 executedCmd
     .then((result) => {
-        const doneStr = `${ cmd.toUpperCase() } DONE`;
+        const doneStr = `${ cmd.toUpperCase() } DONE. `;
         console.log(doneStr);
         console.log('='.repeat(doneStr.length));
     })
@@ -200,9 +110,8 @@ executedCmd
         console.log('='.repeat(errorStr.length));
     })
     .then(() => {
-        if (cmd !== 'status' && cmd !== 'reset-hard') {
-            return cmdStatus();
-        }
         return Promise.resolve();
     })
-    .then(() => process.exit(0));
+    .then(() => {
+        process.exit(0);
+    });

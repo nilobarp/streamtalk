@@ -1,10 +1,12 @@
-/*Migration: /Users/nilotpal/code/heroel/hthero/database/migrations/user_table_201742916316511.js*/
-'use strict';
+// 20170628142431338_user_table.ts
 
-import * as Bluebird from 'bluebird';
+import { Umzug } from 'umzug';
+import { QueryInterface } from 'sequelize';
+
+const tableName: string = '';
 
 module.exports = {
-    up: function(query, DataTypes) {
+    up: function(query: QueryInterface, DataTypes) {
         return query.createTable('users', {
             id: {
                 type: DataTypes.INTEGER,
@@ -31,8 +33,7 @@ module.exports = {
         });
     },
 
-    down: function(query, DataTypes) {
-        // return query.dropAllTables();
+    down: function(query: QueryInterface, DataTypes) {
         return query.dropTable('users');
     }
 };

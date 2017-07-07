@@ -1,7 +1,7 @@
 export class I18N {
     private _locale: string;
 
-    set setLocale (locale: string) {
+    set locale (locale: string) {
         this._locale = locale;
     }
 

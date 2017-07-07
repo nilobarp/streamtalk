@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const Bunyan = require("bunyan");
-let stdoutLogger = Bunyan.createLogger({
+var Bunyan = require("bunyan");
+var stdoutLogger = Bunyan.createLogger({
     name: 'heroEl',
     serializers: Bunyan.stdSerializers,
     streams: [{

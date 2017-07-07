@@ -1,38 +1,27 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const Bunyan = require("bunyan");
-const path = require("path");
-const fs = require("fs");
-const serializers = require("./log.serializers");
-const string_constants_1 = require("./string.constants");
-class LogProvider {
-    get logFolder() {
-        return this._logFolder;
+var Bunyan = require("bunyan");
+var path = require("path");
+var fs = require("fs");
+var serializers = require("./log.serializers");
+var string_constants_1 = require("./string.constants");
+var LogProvider = (function () {
+    function LogProvider() {
     }
-    set logFolder(v) {
-        this._logFolder = v;
-    }
-    get logLevel() {
-        return this._logLevel;
-    }
-    set logLevel(v) {
-        this._logLevel = v;
-    }
-    get instance() {
-        return this._instance;
-    }
-    factory(logger = undefined) {
+    LogProvider.prototype.factory = function (logger) {
+        if (logger === void 0) { logger = undefined; }
         if (logger !== undefined) {
-            let child = logger.child({ ctx: this.callerContext() });
+            var child = logger.child({ ctx: this.callerContext() });
+            child.level(this.level());
             return this.addSerializers(child);
         }
         if (this._instance !== undefined) {
             return this._instance;
         }
-        let LOG_PATH = path.join(process.env[string_constants_1.Constants.VAR_ROOT_PATH], '..', 'storage', 'logs');
+        var LOG_PATH = path.join(process.env[string_constants_1.Constants.VAR_ROOT_PATH], '..', 'storage', 'logs');
         if (fs.existsSync(LOG_PATH) === false) {
             LOG_PATH.split('/')
-                .reduce((_path, _folder) => {
+                .reduce(function (_path, _folder) {
                 _path += path.sep + _folder;
                 if (!fs.existsSync(_path)) {
                     fs.mkdirSync(_path);
@@ -56,21 +45,23 @@ class LogProvider {
         });
         this._instance = this.addSerializers(this._instance);
         return this._instance;
-    }
-    callerContext() {
-        let caller = new Error().stack.split('at ')[3].trim();
-        let callerName = caller.substr(0, caller.indexOf(' ('));
+    };
+    LogProvider.prototype.callerContext = function () {
+        var caller = new Error().stack.split('at ')[3].trim();
+        var callerName = caller.substr(0, caller.indexOf(' ('));
         return callerName;
-    }
-    addSerializers(loggerInstance) {
+    };
+    LogProvider.prototype.addSerializers = function (loggerInstance) {
         loggerInstance.addSerializers({
             user: serializers.userSerializer
         });
         return loggerInstance;
-    }
-    level() {
-        const STR_DEBUG_VAR = 'DEBUG';
-        let debugLevel = process.env[STR_DEBUG_VAR] && process.env[STR_DEBUG_VAR].toUpperCase();
+    };
+    LogProvider.prototype.level = function () {
+        var STR_DEBUG_VAR = 'DEBUG';
+        var STR_NODE_ENV = 'NODE_ENV';
+        var environment = process.env[STR_NODE_ENV] && process.env[STR_NODE_ENV].toUpperCase();
+        var debugLevel = process.env[STR_DEBUG_VAR] && process.env[STR_DEBUG_VAR].toUpperCase();
         switch (debugLevel) {
             case 'TRACE':
                 return Bunyan.TRACE;
@@ -84,10 +75,13 @@ class LogProvider {
                 return Bunyan.FATAL;
             case 'OFF':
                 return Bunyan.FATAL + 1;
-            default:
+            case 'ERROR':
                 return Bunyan.ERROR;
+            default:
+                return environment === 'TEST' ? Bunyan.FATAL + 1 : Bunyan.ERROR;
         }
-    }
-}
+    };
+    return LogProvider;
+}());
 exports.LogProvider = LogProvider;
 //# sourceMappingURL=log.provider.js.map

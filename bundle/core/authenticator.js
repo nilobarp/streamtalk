@@ -12,22 +12,27 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const es6_1 = require("typescript-ioc/es6");
-const types_1 = require("./types");
-let Authenticator = class Authenticator {
-    constructor(authGuard) {
+var es6_1 = require("typescript-ioc/es6");
+var types_1 = require("./types");
+var Authenticator = (function () {
+    function Authenticator(authGuard) {
         this.authGuard = authGuard;
     }
-    get enabled() {
-        return ('initialize' in this.authGuard && 'authenticate' in this.authGuard);
-    }
-    initialize(options) {
+    Object.defineProperty(Authenticator.prototype, "enabled", {
+        get: function () {
+            return ('initialize' in this.authGuard && 'authenticate' in this.authGuard);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Authenticator.prototype.initialize = function (options) {
         return this.authGuard.initialize(options);
-    }
-    authenticate() {
+    };
+    Authenticator.prototype.authenticate = function () {
         return this.authGuard.authenticate();
-    }
-};
+    };
+    return Authenticator;
+}());
 Authenticator = __decorate([
     __param(0, es6_1.Inject),
     __metadata("design:paramtypes", [types_1.AuthGuard])

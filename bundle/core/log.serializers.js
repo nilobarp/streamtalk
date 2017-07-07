@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const util = require("util");
-let userSerializer = (user) => {
+var util = require("util");
+var userSerializer = function (user) {
     return util.format('%s/%s', user.username, '*****');
 };
 exports.userSerializer = userSerializer;

@@ -1,19 +1,19 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const graphQLHTTP = require("express-graphql");
-const schema = require("../app/schemas/schema");
-const env = process.env.NODE_ENV;
+var graphQLHTTP = require("express-graphql");
+var schema = require("../app/schemas/schema");
+var env = process.env.NODE_ENV;
 if (env === 'dev' || env === 'development') {
     exports.graphqlPost = {
         method: 'POST',
         path: '/graphql',
-        handler: graphQLHTTP({ schema, graphiql: false }),
+        handler: graphQLHTTP({ schema: schema, graphiql: false }),
         protected: false
     };
     exports.graphqlGet = {
         method: 'GET',
         path: '/graphql',
-        handler: graphQLHTTP({ schema, graphiql: true }),
+        handler: graphQLHTTP({ schema: schema, graphiql: true }),
         protected: false
     };
 }

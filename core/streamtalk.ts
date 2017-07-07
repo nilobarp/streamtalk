@@ -2,6 +2,7 @@ import { AutoWired, Inject, Singleton } from 'typescript-ioc/es6';
 import * as Bunyan from 'bunyan';
 import * as path from 'path';
 import * as fs from 'fs';
+import * as responseTime from 'response-time';
 import { ServerConfig } from './types';
 import { LogProvider } from './log.provider';
 import { ErrorProvider } from './error.provider';
@@ -114,6 +115,7 @@ export class StreamTalk {
         this.instance.use(jsonp());
         this.instance.use(gzipResponse());
         this.instance.use(bodyParser());
+        this.instance.use(responseTime());
         if (this.auth.enabled) {
             this.instance.use(this.auth.initialize());
         }

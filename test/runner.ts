@@ -4,19 +4,14 @@ import * as path from 'path';
 import * as notifier from 'node-notifier';
 import * as glob from 'glob';
 
-let mocha = new Mocha();
-let testDir = path.join(__dirname, 'spec');
+const mocha = new Mocha();
+
+let testDir = path.join(__dirname);
 let failureCount: number = 0;
-let checkImage: string = path.join(testDir, '..', '..', '..', 'test', 'pass.png');
-let crossImage: string = path.join(testDir, '..', '..', '..', 'test', 'fail.png');
+let checkImage: string = path.join(testDir, '..', '..', 'test', 'artefacts', 'icons', 'pass.png');
+let crossImage: string = path.join(testDir, '..', '..', 'test', 'artefacts', 'icons', 'fail.png');
 
 console.log('/* ---- ----- ----- Test suites ----- ----- ----- */');
-
-// fs.readdirSync(testDir).filter( file => {
-//     return file.substr(-3) === '.js';
-// }).forEach( file => {
-//     mocha.addFile(path.join(testDir, file));
-// });
 
 glob(`${testDir}/**/*.test.js`, (err, matches: string[]) => {
     if (err) {
@@ -32,6 +27,9 @@ glob(`${testDir}/**/*.test.js`, (err, matches: string[]) => {
 });
 
 function run () {
+    const pattern: string = process.argv.slice(2).join('|');
+    mocha.grep(new RegExp(pattern, 'i'));
+
     let runner: any = mocha.run( failures => {
         process.on('exit', () => {
             process.exit(failures);

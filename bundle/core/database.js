@@ -12,20 +12,20 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const Sequelize = require("sequelize");
-const fs = require("fs");
-const path = require("path");
-const es6_1 = require("typescript-ioc/es6");
-const types_1 = require("./types");
-const log_provider_1 = require("./log.provider");
-let Database = class Database {
-    constructor(dbConfig, logProvider) {
+var Sequelize = require("sequelize");
+var fs = require("fs");
+var path = require("path");
+var es6_1 = require("typescript-ioc/es6");
+var types_1 = require("./types");
+var log_provider_1 = require("./log.provider");
+var Database = (function () {
+    function Database(dbConfig, logProvider) {
         this.isConnected = false;
         this.sequelize = undefined;
         this.dbConfig = dbConfig;
         this.logger = logProvider.factory();
     }
-    client() {
+    Database.prototype.client = function () {
         if (this.sequelize) {
             return this.sequelize;
         }
@@ -38,7 +38,7 @@ let Database = class Database {
                 if (!fs.existsSync(this.dbConfig.storage)) {
                     this.dbConfig.storage.split('/')
                         .slice(0, -1)
-                        .reduce((_path, _folder) => {
+                        .reduce(function (_path, _folder) {
                         _path += path.sep + _folder;
                         if (!fs.existsSync(_path)) {
                             fs.mkdirSync(_path);
@@ -47,7 +47,7 @@ let Database = class Database {
                     });
                 }
             }
-            let _sequelize = new Sequelize(this.dbConfig.database, this.dbConfig.user, this.dbConfig.password, {
+            var _sequelize = new Sequelize(this.dbConfig.database, this.dbConfig.user, this.dbConfig.password, {
                 host: this.dbConfig.host,
                 dialect: this.dbConfig.dialect,
                 pool: {
@@ -62,20 +62,29 @@ let Database = class Database {
             delete (this.dbConfig.password);
             return _sequelize;
         }
-    }
-    connect() {
+    };
+    Database.prototype.connect = function () {
         return this.client();
-    }
-    close() {
+    };
+    Database.prototype.close = function () {
         this.sequelize.close();
-    }
-    get instance() {
-        return this.client();
-    }
-    get config() {
-        return this.dbConfig;
-    }
-};
+    };
+    Object.defineProperty(Database.prototype, "instance", {
+        get: function () {
+            return this.client();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Database.prototype, "config", {
+        get: function () {
+            return this.dbConfig;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return Database;
+}());
 Database = __decorate([
     es6_1.Singleton,
     __param(0, es6_1.Inject), __param(1, es6_1.Inject),

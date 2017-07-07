@@ -8,6 +8,25 @@
             "args": [],
             "cwd": "${workspaceRoot}",
             "env": {
+                "NODE_ENV": "test"
+            },
+            "name": "Test runner",
+            // "outDir": "${workspaceRoot}/bundle" ,
+            "outFiles": [
+                "${workspaceRoot}/bundle/**/*.js",
+                "${workspaceRoot}/bundle/**/*.js.map"
+            ],
+            "preLaunchTask": "build",
+            "program": "${workspaceRoot}/test/runner.ts",
+            "request": "launch",
+            "sourceMaps": true,
+            "stopOnEntry": false,
+            "type": "node"
+        },
+        {
+            "args": [],
+            "cwd": "${workspaceRoot}",
+            "env": {
                 "NODE_ENV": "DEV"
             },
             "name": "App Debug",
